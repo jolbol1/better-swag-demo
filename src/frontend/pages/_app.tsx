@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
 import { Geist_Mono, Space_Grotesk } from 'next/font/google';
 import AuthProvider from '../providers/Auth.provider';
+import BetterstackFlagSync from '../components/BetterstackFlagSync';
 import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
@@ -75,6 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={Theme}>
       <div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} ${geistMono.variable}`}>
         <OpenFeatureProvider>
+          <BetterstackFlagSync />
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
               <CurrencyProvider>

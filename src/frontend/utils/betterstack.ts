@@ -11,41 +11,55 @@ declare global {
 
 type BetterstackPayload = Record<string, string | number | boolean | null | undefined>;
 
-function getFunnelStorageKey(event: string) {
-  return `betterstack:funnel:${event}`;
+interface BetterstackControls {
+  manualEventsEnabled?: boolean;
+  userIdentificationEnabled?: boolean;
 }
+
+let manualEventsEnabled = true;
+let userIdentificationEnabled = true;
+let lastKnownUser: BetterstackPayload | null = null;
 
 function isBrowser() {
   return typeof window !== 'undefined';
 }
 
-export function trackBetterstackEvent(event: string, payload?: BetterstackPayload) {
+function syncBetterstackUserState() {
   if (!isBrowser() || typeof window.betterstack !== 'function') {
     return;
   }
 
-  window.betterstack('track', event, payload ?? {});
+  if (!userIdentificationEnabled || lastKnownUser === null) {
+    window.betterstack('user', null);
+    return;
+  }
+
+  window.betterstack('user', lastKnownUser);
 }
 
-export function trackBetterstackFunnelStep(event: string, payload?: BetterstackPayload) {
-  if (!isBrowser() || typeof window.betterstack !== 'function') {
+export function setBetterstackControls({
+  manualEventsEnabled: nextManualEventsEnabled,
+  userIdentificationEnabled: nextUserIdentificationEnabled,
+}: BetterstackControls) {
+  if (typeof nextManualEventsEnabled === 'boolean') {
+    manualEventsEnabled = nextManualEventsEnabled;
+  }
+
+  if (typeof nextUserIdentificationEnabled === 'boolean') {
+    userIdentificationEnabled = nextUserIdentificationEnabled;
+    syncBetterstackUserState();
+  }
+}
+
+export function trackBetterstackEvent(event: string, payload?: BetterstackPayload) {
+  if (!manualEventsEnabled || !isBrowser() || typeof window.betterstack !== 'function') {
     return;
   }
 
-  const storageKey = getFunnelStorageKey(event);
-
-  if (window.sessionStorage.getItem(storageKey)) {
-    return;
-  }
-
-  window.sessionStorage.setItem(storageKey, '1');
   window.betterstack('track', event, payload ?? {});
 }
 
 export function setBetterstackUser(user: BetterstackPayload | null) {
-  if (!isBrowser() || typeof window.betterstack !== 'function') {
-    return;
-  }
-
-  window.betterstack('user', user);
+  lastKnownUser = user;
+  syncBetterstackUserState();
 }

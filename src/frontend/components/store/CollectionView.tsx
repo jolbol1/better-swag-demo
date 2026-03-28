@@ -11,7 +11,7 @@ import {
   getProductImagePath,
   getSearchCategories,
 } from '../../utils/storefront';
-import { trackBetterstackEvent, trackBetterstackFunnelStep } from '../../utils/betterstack';
+import { trackBetterstackEvent } from '../../utils/betterstack';
 import { cn } from '../../utils/cn';
 import CartSummary from './CartSummary';
 import { Badge } from '../ui/badge';
@@ -58,12 +58,6 @@ export default function CollectionView({ products }: { products: Product[] }) {
     if (collection.length === 0) {
       return;
     }
-
-    trackBetterstackFunnelStep('funnel_storefront_viewed', {
-      category_count: categories.length - 1,
-      page: '/',
-      product_family_count: collection.length,
-    });
 
     trackBetterstackEvent('storefront_viewed', {
       product_family_count: collection.length,
@@ -325,16 +319,6 @@ export default function CollectionView({ products }: { products: Product[] }) {
                             variant="outline"
                             onClick={() => {
                               addItem({ productId: activeVariant.product.id, quantity: 1 });
-                              trackBetterstackFunnelStep('funnel_cart_started', {
-                                category: definition.category,
-                                page: '/',
-                                price: activeVariant.product.priceUsd?.units ?? 0,
-                                product_family: definition.name,
-                                product_id: activeVariant.product.id,
-                                quantity: 1,
-                                source: 'collection_card',
-                                variant: activeVariant.label,
-                              });
                               trackBetterstackEvent('product_added_to_cart', {
                                 category: definition.category,
                                 price: activeVariant.product.priceUsd?.units ?? 0,
@@ -352,23 +336,13 @@ export default function CollectionView({ products }: { products: Product[] }) {
                             <Link
                               href={`/product/${activeVariant.product.id}`}
                               onClick={() =>
-                                {
-                                  trackBetterstackFunnelStep('funnel_product_viewed', {
-                                    category: definition.category,
-                                    page: `/product/${activeVariant.product.id}`,
-                                    product_family: definition.name,
-                                    product_id: activeVariant.product.id,
-                                    source: 'collection_card',
-                                    variant: activeVariant.label,
-                                  });
-                                  trackBetterstackEvent('product_detail_opened', {
-                                    category: definition.category,
-                                    product_family: definition.name,
-                                    product_id: activeVariant.product.id,
-                                    source: 'collection_card',
-                                    variant: activeVariant.label,
-                                  });
-                                }
+                                trackBetterstackEvent('product_detail_opened', {
+                                  category: definition.category,
+                                  product_family: definition.name,
+                                  product_id: activeVariant.product.id,
+                                  source: 'collection_card',
+                                  variant: activeVariant.label,
+                                })
                               }
                             >
                               View details

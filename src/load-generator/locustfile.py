@@ -80,6 +80,17 @@ products_by_category = {
     ],
 }
 
+journey_stages = [
+    "storefront_bounce",
+    "product_browse",
+    "cart_abandon",
+    "checkout_started",
+    "order_completed",
+]
+
+api_journey_stage_weights = [34, 27, 18, 12, 9]
+browser_journey_stage_weights = [24, 22, 18, 14, 22]
+
 # The load generator intentionally excludes James Shoppy.
 # He is reserved for manual human-driven frontend sessions during demos.
 demo_users = [
@@ -199,18 +210,27 @@ def build_checkout_person(profile):
     template["userId"] = profile["user_id"]
     return template
 
+def choose_funnel_stage(audience="api"):
+    weights = browser_journey_stage_weights if audience == "browser" else api_journey_stage_weights
+    return random.choices(journey_stages, weights=weights, k=1)[0]
+
+def choose_distinct_products(profile, count):
+    selected = []
+
+    while len(selected) < count:
+        product = choose_product_for_profile(profile)
+        if product not in selected:
+            selected.append(product)
+
+    return selected
+
 class WebsiteUser(HttpUser):
+    weight = 4
     wait_time = between(1, 10)
     
     def on_start(self):
         self.profile = choose_session_profile()
-        logging.info(
-            "Starting user session user_id=%s identified=%s preferred_category=%s",
-            self.profile["user_id"],
-            bool(self.profile["demo_user"]),
-            self.profile["demo_user"]["preferred_category"] if self.profile["demo_user"] else "mixed",
-        )
-        self.index()
+        logging.info("Starting API shopper user_id=%s identified=%s", self.profile["user_id"], bool(self.profile["demo_user"]))
     
     def reset_connection(self):
         """Force a new connection by closing the existing session pool"""
@@ -218,27 +238,28 @@ class WebsiteUser(HttpUser):
         self.client.close()
         # Locust will automatically create a new session on next request
 
-    @task(1)
     def index(self):
         self.reset_connection()
-        logging.info("User accessing index page")
+        logging.info("User %s accessing storefront", self.profile["user_id"])
         self.client.get("/")
 
-    @task(10)
-    def browse_product(self):
-        self.reset_connection()
-        product = choose_product_for_profile(self.profile)
+    def browse_product(self, product=None):
+        if product is None:
+            product = choose_product_for_profile(self.profile)
         self.last_product = product
         logging.info("User %s browsing product: %s", self.profile["user_id"], product)
         self.client.get(
             "/api/products/" + product,
             params={"currencyCode": self.profile["currency_code"]},
         )
+        return product
 
-    @task(3)
-    def get_recommendations(self):
-        self.reset_connection()
-        product = self.last_product if hasattr(self, "last_product") else choose_product_for_profile(self.profile)
+    def get_recommendations(self, product=None):
+        if product is None:
+            if hasattr(self, "last_product"):
+                product = self.last_product
+            else:
+                product = choose_product_for_profile(self.profile)
         logging.info("User %s getting recommendations for product: %s", self.profile["user_id"], product)
         params = {
             "productIds": [product],
@@ -247,19 +268,15 @@ class WebsiteUser(HttpUser):
         }
         self.client.get("/api/recommendations", params=params)
 
-    @task(3)
-    def get_ads(self):
-        self.reset_connection()
-        category = choose_category_for_profile(self.profile)
+    def get_ads(self, category=None):
+        category = category or choose_category_for_profile(self.profile)
         logging.info("User %s getting ads for category: %s", self.profile["user_id"], category)
         params = {
             "contextKeys": [category],
         }
         self.client.get("/api/data/", params=params)
 
-    @task(3)
     def view_cart(self):
-        self.reset_connection()
         logging.info("User %s viewing cart", self.profile["user_id"])
         self.client.get(
             "/api/cart",
@@ -269,14 +286,13 @@ class WebsiteUser(HttpUser):
             },
         )
 
-    @task(2)
-    def add_to_cart(self, user=""):
+    def add_to_cart(self, user="", product=None, quantity=None):
         # Don't reset connection here since this is called by other tasks
         if user == "":
             user = self.profile["user_id"]
-        product = choose_product_for_profile(self.profile)
+        product = product or choose_product_for_profile(self.profile)
         self.last_product = product
-        quantity = random.choice([1, 1, 1, 2, 2, 3])
+        quantity = quantity or random.choice([1, 1, 1, 2, 2, 3])
         logging.info("User %s adding %s of product %s to cart", user, quantity, product)
         self.client.get(
             "/api/products/" + product,
@@ -290,28 +306,80 @@ class WebsiteUser(HttpUser):
             "userId": user,
         }
         self.client.post("/api/cart", json=cart_item)
+        return cart_item["item"]
 
-    @task(1)
-    def checkout(self):
-        self.reset_connection()
-        user = self.profile["user_id"]
-        self.add_to_cart(user=user)
-        checkout_person = build_checkout_person(self.profile)
-        self.client.post("/api/checkout", json=checkout_person)
-        logging.info("Checkout completed for user %s", user)
-        self.profile = choose_session_profile()
+    def get_shipping_quote(self, items, checkout_person):
+        params = {
+            "itemList": json.dumps(items),
+            "currencyCode": self.profile["currency_code"],
+            "address": json.dumps(checkout_person["address"]),
+        }
+        logging.info("User %s requesting shipping quote for %s items", self.profile["user_id"], len(items))
+        self.client.get("/api/shipping", params=params)
 
-    @task(1)
-    def checkout_multi(self):
-        self.reset_connection()
-        user = self.profile["user_id"]
-        item_count = random.choice([2, 3, 4])
-        for i in range(item_count):
-            self.add_to_cart(user=user)
-        checkout_person = build_checkout_person(self.profile)
+    def checkout(self, checkout_person):
         self.client.post("/api/checkout", json=checkout_person)
-        logging.info("Multi-item checkout completed for user %s", user)
+        logging.info("Checkout completed for user %s", self.profile["user_id"])
+
+    @task(12)
+    def run_shopper_journey(self):
+        self.reset_connection()
         self.profile = choose_session_profile()
+        stage = choose_funnel_stage("api")
+        product_count = random.choices([1, 2, 3], weights=[65, 25, 10], k=1)[0]
+        products_to_view = choose_distinct_products(self.profile, product_count)
+
+        logging.info(
+            "User %s running API journey stage=%s identified=%s products=%s",
+            self.profile["user_id"],
+            stage,
+            bool(self.profile["demo_user"]),
+            ",".join(products_to_view),
+        )
+
+        self.index()
+
+        if stage == "storefront_bounce":
+            return
+
+        for product in products_to_view:
+            self.browse_product(product)
+            self.get_recommendations(product)
+            self.get_ads(random.choice(product_category_map.get(product, [choose_category_for_profile(self.profile)])))
+
+        if stage == "product_browse":
+            return
+
+        cart_items = [
+            self.add_to_cart(
+                user=self.profile["user_id"],
+                product=products_to_view[-1],
+                quantity=random.choice([1, 1, 2, 2, 3]),
+            )
+        ]
+
+        if stage in ("checkout_started", "order_completed") and random.random() < 0.35:
+            extra_product = choose_distinct_products(self.profile, 1)[0]
+            cart_items.append(
+                self.add_to_cart(
+                    user=self.profile["user_id"],
+                    product=extra_product,
+                    quantity=random.choice([1, 1, 2]),
+                )
+            )
+
+        self.view_cart()
+
+        if stage == "cart_abandon":
+            return
+
+        checkout_person = build_checkout_person(self.profile)
+        self.get_shipping_quote(cart_items, checkout_person)
+
+        if stage == "checkout_started":
+            return
+
+        self.checkout(checkout_person)
 
     @task(5)
     def flood_home(self):
@@ -327,10 +395,14 @@ browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").l
 
 if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
+        weight = 1
         headless = True  # to use a headless browser, without a GUI
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
+
+        async def pause(self, page: PageWithRetry, min_ms=600, max_ms=1800):
+            await page.wait_for_timeout(random.randint(min_ms, max_ms))
 
         async def seed_session(self, page: PageWithRetry):
             profile = choose_session_profile()
@@ -348,39 +420,69 @@ if browser_traffic_enabled:
                 """,
                 session,
             )
+            await page.goto("/", wait_until="domcontentloaded")
             return profile
 
         @task
         @pw
-        async def open_cart_page_and_change_currency(self, page: PageWithRetry):
+        async def run_weighted_store_journey(self, page: PageWithRetry):
             try:
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 profile = await self.seed_session(page)
-                await page.goto("/cart", wait_until="domcontentloaded")
-                target_currency = "USD" if profile["demo_user"] else random.choice(["USD", "EUR", "GBP", "CHF"])
-                await page.select_option('[name="currency_code"]', target_currency)
-                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
-                logging.info("Browser user %s changed currency to %s", profile["user_id"], target_currency)
-            except Exception as e:
-                logging.error(f"Error in change currency task: {str(e)}")
+                stage = choose_funnel_stage("browser")
+                products_to_view = choose_distinct_products(
+                    profile,
+                    random.choices([1, 2, 3], weights=[70, 22, 8], k=1)[0],
+                )
 
-        @task
-        @pw
-        async def add_product_to_cart(self, page: PageWithRetry):
-            try:
-                page.on("console", lambda msg: print(msg.text))
-                await page.route('**/*', add_baggage_header)
-                profile = await self.seed_session(page)
-                product = choose_product_for_profile(profile)
-                await page.goto(f"/product/{product}", wait_until="domcontentloaded")
+                logging.info(
+                    "Browser user %s running browser journey stage=%s identified=%s products=%s",
+                    profile["user_id"],
+                    stage,
+                    bool(profile["demo_user"]),
+                    ",".join(products_to_view),
+                )
+
+                await self.pause(page)
+
+                if stage == "storefront_bounce":
+                    await self.pause(page, 1200, 2400)
+                    return
+
+                for product in products_to_view:
+                    await page.goto(f"/product/{product}", wait_until="domcontentloaded")
+                    await self.pause(page, 900, 2200)
+
+                if stage == "product_browse":
+                    return
+
+                if random.random() < 0.35:
+                    quantity = random.choice(["2", "3"])
+                    await page.get_by_role("button", name=quantity, exact=True).click()
+                    await self.pause(page, 300, 700)
+
+                await page.get_by_role("button", name="Add to cart").click()
+                await self.pause(page, 900, 1800)
+                await page.goto("/cart", wait_until="domcontentloaded")
+                await self.pause(page, 1200, 2200)
+
+                if stage == "cart_abandon":
+                    return
+
+                if random.random() < 0.4:
+                    await page.fill("#email", profile["demo_user"]["email"] if profile["demo_user"] else f"{profile['user_id'][:8]}@example.com")
+                    await self.pause(page, 250, 600)
+
+                if stage == "checkout_started":
+                    return
+
+                await page.get_by_role("button", name="Place order").click()
                 await page.wait_for_load_state("domcontentloaded")
-                await page.click('button:has-text("Add to cart")')
-                await page.wait_for_load_state("domcontentloaded")
-                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
-                logging.info("Browser user %s added product %s to cart", profile["user_id"], product)
+                await self.pause(page, 1800, 3200)
+                logging.info("Browser user %s completed checkout journey", profile["user_id"])
             except Exception as e:
-                logging.error(f"Error in add to cart task: {str(e)}")
+                logging.error(f"Error in browser journey task: {str(e)}")
 
 async def add_baggage_header(route: Route, request: Request):
     existing_baggage = request.headers.get('baggage', '')

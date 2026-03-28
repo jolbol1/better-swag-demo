@@ -12,7 +12,7 @@ import {
   getStoreVariant,
   getVariantOptions,
 } from '../../utils/storefront';
-import { trackBetterstackEvent, trackBetterstackFunnelStep } from '../../utils/betterstack';
+import { trackBetterstackEvent } from '../../utils/betterstack';
 import { cn } from '../../utils/cn';
 import Recommendations from './Recommendations';
 import { Badge } from '../ui/badge';
@@ -130,14 +130,6 @@ export default function ProductDetailView({
   }, [product.id]);
 
   useEffect(() => {
-    trackBetterstackFunnelStep('funnel_product_viewed', {
-      category: family?.category || 'Merch',
-      page: `/product/${product.id}`,
-      product_family: family?.name || product.name,
-      product_id: product.id,
-      variant: variant?.label || product.name,
-    });
-
     trackBetterstackEvent('product_detail_viewed', {
       category: family?.category || 'Merch',
       product_family: family?.name || product.name,
@@ -158,16 +150,6 @@ export default function ProductDetailView({
 
   function handleAddToCart() {
     addItem({ productId: product.id, quantity });
-    trackBetterstackFunnelStep('funnel_cart_started', {
-      category: family?.category || 'Merch',
-      page: `/product/${product.id}`,
-      price: product.priceUsd?.units ?? 0,
-      product_family: family?.name || product.name,
-      product_id: product.id,
-      quantity,
-      source: 'product_detail',
-      variant: variant?.label || product.name,
-    });
     trackBetterstackEvent('product_added_to_cart', {
       category: family?.category || 'Merch',
       price: product.priceUsd?.units ?? 0,
