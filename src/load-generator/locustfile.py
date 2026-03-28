@@ -31,26 +31,24 @@ def get_flagd_value(FlagName):
     return client.get_integer_value(FlagName, 0)
 
 categories = [
-    "binoculars",
-    "telescopes",
-    "accessories",
-    "assembly",
-    "travel",
-    "books",
+    "apparel",
+    "desk",
+    "carry",
+    "hoodies",
+    "tees",
+    "bags",
     None,
 ]
 
 products = [
-    "0PUK6V6EV0",
-    "1YMWWN1N4O",
-    "2ZYFJ3GM2N",
-    "66VCHSJNUP",
-    "6E92ZMYYFZ",
-    "9SIQT8TOJO",
-    "L9ECAV7KIM",
-    "LS4PSXUNUM",
-    "OLJCESPC7Z",
-    "HQTGWGPNH4",
+    "uptime-tee-bone",
+    "uptime-tee-washed-black",
+    "incident-hoodie-sand",
+    "incident-hoodie-charcoal",
+    "on-call-mug-white",
+    "on-call-mug-black",
+    "logs-tote-natural",
+    "logs-tote-black",
 ]
 
 people_file = open('people.json')

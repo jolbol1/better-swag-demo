@@ -3,16 +3,11 @@
 
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Ad from '../../../../components/Ad';
-import Button from '../../../../components/Button';
-import CheckoutItem from '../../../../components/CheckoutItem';
-import Footer from '../../../../components/Footer';
-import Layout from '../../../../components/Layout';
-import Recommendations from '../../../../components/Recommendations';
 import AdProvider from '../../../../providers/Ad.provider';
-import * as S from '../../../../styles/Checkout.styled';
+import AdStrip from '../../../../components/store/AdStrip';
+import OrderCompleteView from '../../../../components/store/OrderCompleteView';
+import StoreShell from '../../../../components/store/StoreShell';
 import { IProductCheckout } from '../../../../types/Cart';
 
 const Checkout: NextPage = () => {
@@ -25,35 +20,12 @@ const Checkout: NextPage = () => {
       contextKeys={[...new Set(items.flatMap(({ item }) => item.product.categories))]}
     >
       <Head>
-        <title>Otel Demo - Checkout</title>
+        <title>Order Complete | Better Swag</title>
       </Head>
-      <Layout>
-        <S.Checkout>
-          <S.Container>
-            <S.Title>Your order is complete!</S.Title>
-            <S.Subtitle>We&apos;ve sent you a confirmation email.</S.Subtitle>
-
-            <S.ItemList>
-              {items.map(checkoutItem => (
-                <CheckoutItem
-                  key={checkoutItem.item.productId}
-                  checkoutItem={checkoutItem}
-                  address={shippingAddress}
-                />
-              ))}
-            </S.ItemList>
-
-            <S.ButtonContainer>
-              <Link href="/">
-                <Button type="submit">Continue Shopping</Button>
-              </Link>
-            </S.ButtonContainer>
-          </S.Container>
-          <Recommendations />
-        </S.Checkout>
-        <Ad />
-        <Footer />
-      </Layout>
+      <StoreShell>
+        <AdStrip />
+        <OrderCompleteView order={{ ...JSON.parse((query.order || '{}') as string), items, shippingAddress }} />
+      </StoreShell>
     </AdProvider>
   );
 };

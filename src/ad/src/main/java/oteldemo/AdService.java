@@ -207,49 +207,30 @@ public final class AdService {
   }
 
   private static ImmutableListMultimap<String, Ad> createAdsMap() {
-    Ad binoculars =
+    Ad uptimeTee =
         Ad.newBuilder()
-            .setRedirectUrl("/product/2ZYFJ3GM2N")
-            .setText("Roof Binoculars for sale. 50% off.")
+            .setRedirectUrl("/product/uptime-tee-bone")
+            .setText("Uptime Tee in bone is back. Heavyweight cotton, limited drop.")
             .build();
-    Ad explorerTelescope =
+    Ad incidentHoodie =
         Ad.newBuilder()
-            .setRedirectUrl("/product/66VCHSJNUP")
-            .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
+            .setRedirectUrl("/product/incident-hoodie-charcoal")
+            .setText("Incident Hoodie in charcoal. Built for long nights and fast recoveries.")
             .build();
-    Ad colorImager =
+    Ad onCallMug =
         Ad.newBuilder()
-            .setRedirectUrl("/product/0PUK6V6EV0")
-            .setText("Solar System Color Imager for sale. 30% off.")
+            .setRedirectUrl("/product/on-call-mug-black")
+            .setText("On-Call Mug in matte black. Clean ceramic for stronger coffee.")
             .build();
-    Ad opticalTube =
+    Ad logsTote =
         Ad.newBuilder()
-            .setRedirectUrl("/product/9SIQT8TOJO")
-            .setText("Optical Tube Assembly for sale. 10% off.")
-            .build();
-    Ad travelTelescope =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/1YMWWN1N4O")
-            .setText(
-                "Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
-            .build();
-    Ad solarFilter =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/6E92ZMYYFZ")
-            .setText("Solar Filter for sale. Buy two, get third one for free")
-            .build();
-    Ad cleaningKit =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/L9ECAV7KIM")
-            .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
+            .setRedirectUrl("/product/logs-tote-natural")
+            .setText("Logs Tote in natural. Heavy canvas for laptops, notebooks, and travel.")
             .build();
     return ImmutableListMultimap.<String, Ad>builder()
-        .putAll("binoculars", binoculars)
-        .putAll("telescopes", explorerTelescope)
-        .putAll("accessories", colorImager, solarFilter, cleaningKit)
-        .putAll("assembly", opticalTube)
-        .putAll("travel", travelTelescope)
-        // Keep the books category free of ads to ensure the random code branch is tested
+        .putAll("apparel", uptimeTee, incidentHoodie)
+        .putAll("desk", onCallMug)
+        .putAll("carry", logsTote)
         .build();
   }
 

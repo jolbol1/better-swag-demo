@@ -3,5 +3,18 @@
 
 import { CypressFields } from './enums/CypressFields';
 
-export const getElementByField = (field: CypressFields, context: Cypress.Chainable = cy) =>
-  context.get(`[data-cy="${field}"]`);
+export { CypressFields };
+
+type QueryContext = {
+  get(selector: string): any;
+};
+
+export const getElementByField = (field: CypressFields, context?: QueryContext): any => {
+  const activeContext = context ?? (globalThis as { cy?: QueryContext }).cy;
+
+  if (!activeContext) {
+    throw new Error('Cypress query context is unavailable.');
+  }
+
+  return activeContext.get(`[data-cy="${field}"]`);
+};
