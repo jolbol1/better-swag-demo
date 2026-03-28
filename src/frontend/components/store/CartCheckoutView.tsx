@@ -1,18 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { CreditCard, ShieldCheck, Truck } from 'lucide-react';
 import ApiGateway from '../../gateways/Api.gateway';
-import SessionGateway from '../../gateways/Session.gateway';
+import { useAuth } from '../../providers/Auth.provider';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
+import { trackBetterstackEvent } from '../../utils/betterstack';
 import { formatMoney, moneyToNumber } from '../../utils/storefront';
 import Recommendations from './Recommendations';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
-
-const { userId } = SessionGateway.getSession();
 
 interface IFormState {
   city: string;
@@ -42,6 +41,7 @@ const defaultFormState: IFormState = {
 
 export default function CartCheckoutView() {
   const router = useRouter();
+  const { sessionUserId, user } = useAuth();
   const {
     cart: { items },
     placeOrder,
@@ -49,6 +49,13 @@ export default function CartCheckoutView() {
   const { selectedCurrency } = useCurrency();
   const [formState, setFormState] = useState<IFormState>(defaultFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setFormState(current => ({
+      ...current,
+      email: user?.email ?? defaultFormState.email,
+    }));
+  }, [user]);
 
   const shippingAddress = useMemo(
     () => ({
@@ -64,6 +71,19 @@ export default function CartCheckoutView() {
   const isShippingReady = Object.values(shippingAddress).every(Boolean) && items.length > 0;
   const subtotal = items.reduce((sum, item) => sum + moneyToNumber(item.product.priceUsd) * item.quantity, 0);
 
+  useEffect(() => {
+    if (items.length === 0) {
+      return;
+    }
+
+    trackBetterstackEvent('checkout_viewed', {
+      currency: selectedCurrency || 'USD',
+      identified_user: Boolean(user),
+      item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+      subtotal,
+    });
+  }, [items, selectedCurrency, subtotal, user]);
+
   const { data: shippingCost } = useQuery({
     queryKey: ['shipping-quote', items, selectedCurrency, shippingAddress],
     queryFn: () => ApiGateway.getShippingCost(items, selectedCurrency || 'USD', shippingAddress),
@@ -73,13 +93,37 @@ export default function CartCheckoutView() {
 
   const total = subtotal + moneyToNumber(shippingCost);
 
+  useEffect(() => {
+    if (!isShippingReady || !shippingCost) {
+      return;
+    }
+
+    trackBetterstackEvent('shipping_quote_received', {
+      country: shippingAddress.country,
+      currency: selectedCurrency || 'USD',
+      item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+      shipping_cost: moneyToNumber(shippingCost),
+      state: shippingAddress.state,
+    });
+  }, [isShippingReady, items, selectedCurrency, shippingAddress.country, shippingAddress.state, shippingCost]);
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
 
+    trackBetterstackEvent('checkout_submitted', {
+      currency: selectedCurrency || 'USD',
+      identified_user: Boolean(user),
+      item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+      shipping_country: shippingAddress.country,
+      shipping_state: shippingAddress.state,
+      subtotal,
+      user_id: sessionUserId,
+    });
+
     try {
       const order = await placeOrder({
-        userId,
+        userId: sessionUserId,
         userCurrency: selectedCurrency || 'USD',
         email: formState.email,
         address: shippingAddress,

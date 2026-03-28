@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Search, Sparkles } from 'lucide-react';
 import { useCart } from '../../providers/Cart.provider';
@@ -11,6 +11,7 @@ import {
   getProductImagePath,
   getSearchCategories,
 } from '../../utils/storefront';
+import { trackBetterstackEvent } from '../../utils/betterstack';
 import { cn } from '../../utils/cn';
 import CartSummary from './CartSummary';
 import { Badge } from '../ui/badge';
@@ -53,6 +54,31 @@ export default function CollectionView({ products }: { products: Product[] }) {
     });
   }, [activeCategory, collection, deferredSearch]);
 
+  useEffect(() => {
+    if (collection.length === 0) {
+      return;
+    }
+
+    trackBetterstackEvent('storefront_viewed', {
+      product_family_count: collection.length,
+      category_count: categories.length - 1,
+    });
+  }, [categories.length, collection.length]);
+
+  useEffect(() => {
+    const trimmedSearch = deferredSearch.trim();
+
+    if (!trimmedSearch) {
+      return;
+    }
+
+    trackBetterstackEvent('catalog_search_performed', {
+      search_term: trimmedSearch,
+      result_count: visibleProducts.length,
+      active_category: activeCategory,
+    });
+  }, [activeCategory, deferredSearch, visibleProducts.length]);
+
   return (
     <main className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="space-y-8">
@@ -73,10 +99,31 @@ export default function CollectionView({ products }: { products: Product[] }) {
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <Button asChild size="lg">
-                    <a href="#catalog">Browse the drop</a>
+                    <a
+                      href="#catalog"
+                      onClick={() =>
+                        trackBetterstackEvent('storefront_cta_clicked', {
+                          cta_id: 'browse_drop',
+                          page: '/',
+                        })
+                      }
+                    >
+                      Browse the drop
+                    </a>
                   </Button>
                   <Button asChild size="lg" variant="outline">
-                    <Link href="/product/incident-hoodie-sand">Open merch lab</Link>
+                    <Link
+                      href="/product/incident-hoodie-sand"
+                      onClick={() =>
+                        trackBetterstackEvent('storefront_cta_clicked', {
+                          cta_id: 'open_merch_lab',
+                          destination_product_id: 'incident-hoodie-sand',
+                          page: '/',
+                        })
+                      }
+                    >
+                      Open merch lab
+                    </Link>
                   </Button>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -163,6 +210,12 @@ export default function CollectionView({ products }: { products: Product[] }) {
                           : 'border-white/10 bg-white/[0.03] text-muted-foreground hover:border-white/20 hover:text-foreground'
                       )}
                       onClick={() => setActiveCategory(category)}
+                      onClickCapture={() =>
+                        trackBetterstackEvent('catalog_filter_changed', {
+                          category,
+                          page: '/',
+                        })
+                      }
                     >
                       {category}
                     </button>
@@ -233,10 +286,18 @@ export default function CollectionView({ products }: { products: Product[] }) {
                                   : 'border-white/10 bg-white/[0.03] text-muted-foreground hover:border-white/20 hover:text-foreground'
                               )}
                               onClick={() =>
-                                setSelectedVariants(current => ({
-                                  ...current,
-                                  [definition.slug]: variant.product.id,
-                                }))
+                                {
+                                  setSelectedVariants(current => ({
+                                    ...current,
+                                    [definition.slug]: variant.product.id,
+                                  }));
+                                  trackBetterstackEvent('catalog_variant_selected', {
+                                    category: definition.category,
+                                    product_family: definition.name,
+                                    product_id: variant.product.id,
+                                    variant: variant.label,
+                                  });
+                                }
                               }
                             >
                               <span
@@ -256,12 +317,34 @@ export default function CollectionView({ products }: { products: Product[] }) {
                         <div className="flex gap-3">
                           <Button
                             variant="outline"
-                            onClick={() => addItem({ productId: activeVariant.product.id, quantity: 1 })}
+                            onClick={() => {
+                              addItem({ productId: activeVariant.product.id, quantity: 1 });
+                              trackBetterstackEvent('product_added_to_cart', {
+                                category: definition.category,
+                                price: activeVariant.product.priceUsd?.units ?? 0,
+                                product_family: definition.name,
+                                product_id: activeVariant.product.id,
+                                quantity: 1,
+                                source: 'collection_card',
+                                variant: activeVariant.label,
+                              });
+                            }}
                           >
                             Add to cart
                           </Button>
                           <Button asChild>
-                            <Link href={`/product/${activeVariant.product.id}`}>
+                            <Link
+                              href={`/product/${activeVariant.product.id}`}
+                              onClick={() =>
+                                trackBetterstackEvent('product_detail_opened', {
+                                  category: definition.category,
+                                  product_family: definition.name,
+                                  product_id: activeVariant.product.id,
+                                  source: 'collection_card',
+                                  variant: activeVariant.label,
+                                })
+                              }
+                            >
                               View details
                               <ArrowRight className="size-4" />
                             </Link>

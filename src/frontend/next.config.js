@@ -5,6 +5,7 @@
 
 const dotEnv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
+const { withSentryConfig } = require('@sentry/nextjs');
 const { resolve } = require('path');
 
 const myEnv = dotEnv.config({
@@ -62,4 +63,6 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+module.exports = withSentryConfig(nextConfig, {
+  silent: true,
+});

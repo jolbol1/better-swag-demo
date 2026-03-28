@@ -1,11 +1,15 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { ArrowRight, ShoppingBag } from 'lucide-react';
+import { ArrowRight, LogOut, ShoppingBag, UserRound } from 'lucide-react';
+import { useAuth } from '../../providers/Auth.provider';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import { Button } from '../ui/button';
 
 export default function StoreHeader() {
+  const router = useRouter();
+  const { isAuthenticated, signOut, user } = useAuth();
   const { currencyCodeList, selectedCurrency, setSelectedCurrency } = useCurrency();
   const {
     cart: { items },
@@ -53,6 +57,27 @@ export default function StoreHeader() {
               <ArrowRight className="size-4" />
             </a>
           </Button>
+          {isAuthenticated && user ? (
+            <>
+              <Button asChild variant="outline" className="rounded-2xl">
+                <Link href={{ pathname: '/login', query: { from: router.asPath } }}>
+                  <UserRound className="size-4" />
+                  {user.firstName}
+                </Link>
+              </Button>
+              <Button type="button" variant="ghost" className="rounded-2xl" onClick={signOut}>
+                <LogOut className="size-4" />
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <Button asChild variant="outline" className="rounded-2xl">
+              <Link href={{ pathname: '/login', query: { from: router.asPath } }}>
+                <UserRound className="size-4" />
+                Sign in
+              </Link>
+            </Button>
+          )}
           <Button asChild variant="outline" className="rounded-2xl">
             <Link href="/cart">
               <ShoppingBag className="size-4" />
@@ -65,6 +90,11 @@ export default function StoreHeader() {
             </Link>
           </Button>
         </div>
+        {isAuthenticated && user ? (
+          <div className="mt-4 rounded-2xl border border-emerald-400/15 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+            Identified as {user.username} • {user.plan} plan • {user.company}
+          </div>
+        ) : null}
       </div>
     </header>
   );

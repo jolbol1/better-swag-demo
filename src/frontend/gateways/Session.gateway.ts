@@ -3,30 +3,59 @@
 
 import { v4 } from 'uuid';
 
-interface ISession {
+export interface ISession {
+  demoUserId: string | null;
   userId: string;
   currencyCode: string;
 }
 
 const sessionKey = 'session';
-const defaultSession = {
+const createAnonymousSession = (overrides?: Partial<ISession>): ISession => ({
+  demoUserId: null,
   userId: v4(),
   currencyCode: 'USD',
-};
+  ...overrides,
+});
+const serverSession = createAnonymousSession();
 
 const SessionGateway = () => ({
   getSession(): ISession {
-    if (typeof window === 'undefined') return defaultSession;
+    if (typeof window === 'undefined') return serverSession;
     const sessionString = localStorage.getItem(sessionKey);
 
-    if (!sessionString) localStorage.setItem(sessionKey, JSON.stringify(defaultSession));
+    if (!sessionString) {
+      const anonymousSession = createAnonymousSession();
+      localStorage.setItem(sessionKey, JSON.stringify(anonymousSession));
 
-    return JSON.parse(sessionString || JSON.stringify(defaultSession)) as ISession;
+      return anonymousSession;
+    }
+
+    try {
+      return {
+        ...createAnonymousSession(),
+        ...(JSON.parse(sessionString) as Partial<ISession>),
+      };
+    } catch {
+      const anonymousSession = createAnonymousSession();
+      localStorage.setItem(sessionKey, JSON.stringify(anonymousSession));
+
+      return anonymousSession;
+    }
+  },
+  setSession(session: ISession) {
+    localStorage.setItem(sessionKey, JSON.stringify(session));
+
+    return session;
   },
   setSessionValue<K extends keyof ISession>(key: K, value: ISession[K]) {
     const session = this.getSession();
 
-    localStorage.setItem(sessionKey, JSON.stringify({ ...session, [key]: value }));
+    return this.setSession({ ...session, [key]: value });
+  },
+  clearIdentifiedUser() {
+    const { currencyCode } = this.getSession();
+
+    return this.setSession(createAnonymousSession({ currencyCode }));
   },
 });
 

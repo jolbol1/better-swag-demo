@@ -6,8 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import SessionGateway from '../gateways/Session.gateway';
 
-const { currencyCode } = SessionGateway.getSession();
-
 interface IContext {
   currencyCodeList: string[];
   setSelectedCurrency(currency: string): void;
@@ -31,11 +29,7 @@ const CurrencyProvider = ({ children }: IProps) => {
     queryKey: ['currency'],
     queryFn: ApiGateway.getSupportedCurrencyList
   });
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
-
-  useEffect(() => {
-    setSelectedCurrency(currencyCode);
-  }, []);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => SessionGateway.getSession().currencyCode);
 
   const onSelectCurrency = useCallback((currencyCode: string) => {
     setSelectedCurrency(currencyCode);

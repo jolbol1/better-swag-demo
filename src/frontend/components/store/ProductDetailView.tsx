@@ -12,6 +12,7 @@ import {
   getStoreVariant,
   getVariantOptions,
 } from '../../utils/storefront';
+import { trackBetterstackEvent } from '../../utils/betterstack';
 import { cn } from '../../utils/cn';
 import Recommendations from './Recommendations';
 import { Badge } from '../ui/badge';
@@ -129,6 +130,15 @@ export default function ProductDetailView({
   }, [product.id]);
 
   useEffect(() => {
+    trackBetterstackEvent('product_detail_viewed', {
+      category: family?.category || 'Merch',
+      product_family: family?.name || product.name,
+      product_id: product.id,
+      variant: variant?.label || product.name,
+    });
+  }, [family?.category, family?.name, product.id, product.name, variant?.label]);
+
+  useEffect(() => {
     if (!feedback) {
       return;
     }
@@ -140,6 +150,15 @@ export default function ProductDetailView({
 
   function handleAddToCart() {
     addItem({ productId: product.id, quantity });
+    trackBetterstackEvent('product_added_to_cart', {
+      category: family?.category || 'Merch',
+      price: product.priceUsd?.units ?? 0,
+      product_family: family?.name || product.name,
+      product_id: product.id,
+      quantity,
+      source: 'product_detail',
+      variant: variant?.label || product.name,
+    });
     setFeedback('Added to cart');
   }
 
@@ -153,9 +172,24 @@ export default function ProductDetailView({
     });
 
     setSavedMockups(current => [mockup, ...current].slice(0, 24));
+    trackBetterstackEvent('merch_lab_preview_saved', {
+      badge_text: badgeText,
+      product_family: family?.name || product.name,
+      product_id: product.id,
+      saved_preview_count: Math.min(savedMockups.length + 1, 24),
+      variant: variant?.label || product.name,
+    });
   }
 
   function generateLookbookSet() {
+    trackBetterstackEvent('merch_lab_batch_generated', {
+      badge_text: badgeText,
+      batch_size: 12,
+      product_family: family?.name || product.name,
+      product_id: product.id,
+      variant: variant?.label || product.name,
+    });
+
     startTransition(() => {
       const mockups = Array.from({ length: 12 }, (_, index) =>
         createPreviewMockup({
@@ -234,7 +268,15 @@ export default function ProductDetailView({
                             ? 'border-primary/60 bg-primary/12 text-foreground'
                             : 'border-white/10 bg-white/[0.03] text-muted-foreground hover:border-white/20 hover:text-foreground'
                         )}
-                        onClick={() => router.push(`/product/${option.productId}`)}
+                        onClick={() => {
+                          trackBetterstackEvent('product_variant_selected', {
+                            product_family: family?.name || product.name,
+                            product_id: option.productId,
+                            source: 'product_detail',
+                            variant: option.label,
+                          });
+                          router.push(`/product/${option.productId}`);
+                        }}
                       >
                         <span
                           className="size-3 rounded-full border border-black/10"
@@ -325,7 +367,20 @@ export default function ProductDetailView({
                       </p>
                     </div>
                     <Button asChild variant="outline" className="w-full">
-                      <Link href={`/product/${relatedProduct.id}`}>Open product</Link>
+                      <Link
+                        href={`/product/${relatedProduct.id}`}
+                        onClick={() =>
+                          trackBetterstackEvent('product_detail_opened', {
+                            category: relatedFamily?.category || 'Merch',
+                            product_family: relatedFamily?.name || relatedProduct.name,
+                            product_id: relatedProduct.id,
+                            source: 'related_products',
+                            variant: relatedVariant?.label || relatedProduct.name,
+                          })
+                        }
+                      >
+                        Open product
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -393,7 +448,16 @@ export default function ProductDetailView({
                 <Button variant="outline" onClick={generateLookbookSet}>
                   {isPending ? 'Generating...' : 'Generate 12 previews'}
                 </Button>
-                <Button variant="ghost" onClick={() => setSavedMockups([])}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    trackBetterstackEvent('merch_lab_cleared', {
+                      cleared_preview_count: savedMockups.length,
+                      product_id: product.id,
+                    });
+                    setSavedMockups([]);
+                  }}
+                >
                   Clear studio
                 </Button>
               </div>

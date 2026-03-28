@@ -12,9 +12,14 @@ RUN npm ci
 
 COPY ./src/frontend/components/ components/
 COPY ./src/frontend/gateways/ gateways/
+COPY ./src/frontend/instrumentation-client.ts instrumentation-client.ts
+COPY ./src/frontend/instrumentation.ts instrumentation.ts
 COPY ./src/frontend/pages/ pages/
 COPY ./src/frontend/protos/ protos/
 COPY ./src/frontend/providers/ providers/
+COPY ./src/frontend/sentry.edge.config.ts sentry.edge.config.ts
+COPY ./src/frontend/sentry.server.config.ts sentry.server.config.ts
+COPY ./src/frontend/sentry.shared.ts sentry.shared.ts
 COPY ./src/frontend/services/ services/
 COPY ./src/frontend/styles/ styles/
 COPY ./src/frontend/types/ types/

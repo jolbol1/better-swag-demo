@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Better Swag demo storefront shell for presentation use." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <title>Better Swag</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111b;
+      --panel: rgba(10, 20, 32, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #f7fafc;
+      --muted: rgba(226, 232, 240, 0.74);
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.22), transparent 22%),
+        linear-gradient(180deg, #040b13 0%, #091421 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(56, 189, 248, 0.14);
+      display: grid;
+      place-items: center;
+    }
+
+    .brand-mark img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .topbar nav {
+      display: flex;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 72px;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1.4fr 0.9fr;
+    }
+
+    .panel {
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-copy {
+      padding: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-copy p {
+      max-width: 44rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font-weight: 600;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      color: #061019;
+    }
+
+    .button-secondary {
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+    }
+
+    .hero-stats {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 30px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.5rem;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .hero-side {
+      padding: 26px;
+    }
+
+    .mock-window {
+      overflow: hidden;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mock-bar {
+      display: flex;
+      gap: 8px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mock-bar span {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .mock-content {
+      padding: 18px;
+    }
+
+    .mock-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mock-card+.mock-card {
+      margin-top: 14px;
+    }
+
+    .mock-card strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .mock-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .catalog {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+
+    .catalog-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .catalog-head h2 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
+    }
+
+    .catalog-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .catalog-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .product-card {
+      padding: 18px;
+    }
+
+    .product-media {
+      height: 210px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 48%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 0.88rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .product-card strong {
+      display: block;
+      margin-top: 16px;
+      font-size: 1.05rem;
+    }
+
+    .product-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .product-card em {
+      display: block;
+      margin-top: 14px;
+      color: #7dd3fc;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .root-note {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 56px;
+      color: rgba(226, 232, 240, 0.58);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1024px) {
+
+      .hero-grid,
+      .catalog-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+
+      .topbar,
+      .catalog-head,
+      .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-grid,
+      .catalog-grid,
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .hero,
+      .catalog,
+      .root-note {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .hero-copy,
+      .hero-side {
+        padding: 24px;
+      }
+    }
+  </style>
+  <script>
+    !function (b, e, t, r) {
+      b[t] = b[t] || function (...args) { (b[t].q = b[t].q || []).push(args) };
+      b[t].l = +new Date;
+      var s = e.createElement('script'); s.async = 1; s.crossOrigin = 'anonymous';
+      s.src = 'https://betterstack.net/b.js?t=' + r;
+      (e.head || e.getElementsByTagName('head')[0]).appendChild(s);
+    }(window, document, 'betterstack', 'fkZkZd4gC1qLzHn5k9mghYkp');
+    betterstack('init', { environment: 'production' });
+  </script>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">
+            <img src="/betterstack-logo.png" alt="Better Stack" />
+          </div>
+          <div class="brand-copy">
+            <strong>Better Swag</strong>
+            <span>Presentation shell based on the demo storefront</span>
+          </div>
+        </div>
+        <nav>
+          <a href="#">Catalog</a>
+          <a href="#">Featured</a>
+          <a href="#">Checkout</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-grid">
+            <div class="panel hero-copy">
+              <div class="eyebrow">Demo Storefront</div>
+              <h1>Swag for people who debug production on purpose.</h1>
+              <p>
+                This is a fake standalone <code>index.html</code> for demos. It is styled to
+                look like the Better Swag storefront while keeping the familiar plain React app
+                shell structure of a simple root-mounted page.
+              </p>
+              <div class="hero-actions">
+                <a class="button button-primary" href="#">Browse the drop</a>
+                <a class="button button-secondary" href="#">Open merch lab</a>
+              </div>
+              <div class="hero-stats">
+                <div class="stat">
+                  <strong>08</strong>
+                  <span>Products</span>
+                </div>
+                <div class="stat">
+                  <strong>02</strong>
+                  <span>Variants per family</span>
+                </div>
+                <div class="stat">
+                  <strong>$75+</strong>
+                  <span>Free shipping threshold</span>
+                </div>
+              </div>
+            </div>
+
+            <aside class="panel hero-side">
+              <div class="mock-window">
+                <div class="mock-bar">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="mock-content">
+                  <div class="mock-card">
+                    <strong>Featured drop</strong>
+                    <span>Incident Hoodie / Sand / Soft fleece pullover</span>
+                  </div>
+                  <div class="mock-card">
+                    <strong>Real backend wiring</strong>
+                    <span>Cart, checkout, shipping, recommendations, ads, currency</span>
+                  </div>
+                  <div class="mock-card">
+                    <strong>Static HTML demo</strong>
+                    <span>No React runtime required for the presentation version</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="catalog">
+          <div class="catalog-head">
+            <div>
+              <h2>Collection Preview</h2>
+              <p>Static cards that mirror the Better Swag catalog tone and layout.</p>
+            </div>
+          </div>
+
+          <div class="catalog-grid">
+            <article class="panel product-card">
+              <div class="product-media">Uptime Tee</div>
+              <strong>Uptime Tee</strong>
+              <span>Heavyweight cotton with a direct Better Stack wordmark print.</span>
+              <em>$32.00</em>
+            </article>
+
+            <article class="panel product-card">
+              <div class="product-media">Incident Hoodie</div>
+              <strong>Incident Hoodie</strong>
+              <span>Soft fleece pullover for deploy nights and very long mornings.</span>
+              <em>$68.00</em>
+            </article>
+
+            <article class="panel product-card">
+              <div class="product-media">On-Call Mug</div>
+              <strong>On-Call Mug</strong>
+              <span>Ceramic caffeine container with the Better Stack mark.</span>
+              <em>$18.00</em>
+            </article>
+
+            <article class="panel product-card">
+              <div class="product-media">Logs Tote</div>
+              <strong>Logs Tote</strong>
+              <span>Heavy canvas tote for laptops, notebooks, and too many stickers.</span>
+              <em>$26.00</em>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <div class="root-note">
+        Typical React shell markers included: <code>&lt;noscript&gt;</code>, <code>#root</code>,
+        title, favicon, and a single mount container.
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
