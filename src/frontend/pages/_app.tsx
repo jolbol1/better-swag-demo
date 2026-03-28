@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import '../styles/globals.css';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
 import { Geist_Mono, Space_Grotesk } from 'next/font/google';
@@ -12,6 +13,7 @@ import Theme from '../styles/Theme';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
+import { FRONTEND_VERSION } from '../utils/version';
 
 declare global {
   interface Window {
@@ -64,12 +66,13 @@ const geistMono = Geist_Mono({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    console.log(`[frontend] version ${FRONTEND_VERSION}`);
+  }, []);
+
   return (
     <ThemeProvider theme={Theme}>
-      <div
-        className={`${spaceGrotesk.variable} ${geistMono.variable}`}
-        style={{ fontFamily: 'var(--font-sans)' }}
-      >
+      <div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} ${geistMono.variable}`}>
         <OpenFeatureProvider>
           <QueryClientProvider client={queryClient}>
             <CurrencyProvider>
