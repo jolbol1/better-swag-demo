@@ -47,6 +47,18 @@ export default class MyDocument extends Document<{ envString: string }> {
     return (
       <Html>
         <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `!function(b,e,t,r){
+  b[t]=b[t]||function(...args){(b[t].q=b[t].q||[]).push(args)};
+  b[t].l=+new Date;
+  var s=e.createElement('script'); s.async=1; s.crossOrigin='anonymous';
+  s.src='https://betterstack.net/b.js?t='+r;
+  (e.head||e.getElementsByTagName('head')[0]).appendChild(s);
+}(window,document,'betterstack','fkZkZd4gC1qLzHn5k9mghYkp');
+betterstack('init', { environment: 'production' });`,
+            }}
+          />
         </Head>
         <body>
           <Main />
