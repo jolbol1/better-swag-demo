@@ -11,6 +11,10 @@ declare global {
 
 type BetterstackPayload = Record<string, string | number | boolean | null | undefined>;
 
+function getFunnelStorageKey(event: string) {
+  return `betterstack:funnel:${event}`;
+}
+
 function isBrowser() {
   return typeof window !== 'undefined';
 }
@@ -20,6 +24,21 @@ export function trackBetterstackEvent(event: string, payload?: BetterstackPayloa
     return;
   }
 
+  window.betterstack('track', event, payload ?? {});
+}
+
+export function trackBetterstackFunnelStep(event: string, payload?: BetterstackPayload) {
+  if (!isBrowser() || typeof window.betterstack !== 'function') {
+    return;
+  }
+
+  const storageKey = getFunnelStorageKey(event);
+
+  if (window.sessionStorage.getItem(storageKey)) {
+    return;
+  }
+
+  window.sessionStorage.setItem(storageKey, '1');
   window.betterstack('track', event, payload ?? {});
 }
 

@@ -80,6 +80,22 @@ export const demoUsers: DemoUser[] = [
     state: 'WA',
     avatarAccent: '#c084fc',
   },
+  {
+    id: 'usr_james_shoppy',
+    email: 'james.shoppy@humanloop.store',
+    username: 'James Shoppy',
+    firstName: 'James',
+    lastName: 'Shoppy',
+    plan: 'enterprise',
+    team: 'Commerce',
+    company: 'Human Loop Store',
+    role: 'Solutions Architect',
+    lifecycleStage: 'power-user',
+    preferredCategory: 'Apparel',
+    city: 'Chicago',
+    state: 'IL',
+    avatarAccent: '#fb7185',
+  },
 ];
 
 export function findDemoUser(userId: string | null | undefined) {

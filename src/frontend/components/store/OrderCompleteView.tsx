@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import { IProductCheckout } from '../../types/Cart';
-import { trackBetterstackEvent } from '../../utils/betterstack';
+import { trackBetterstackEvent, trackBetterstackFunnelStep } from '../../utils/betterstack';
 import { formatMoney, getProductImagePath, getStoreFamily, getStoreVariant, moneyToNumber } from '../../utils/storefront';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -13,6 +13,14 @@ export default function OrderCompleteView({ order }: { order: IProductCheckout }
   const currencyTemplate = order.shippingCost || order.items[0]?.cost;
 
   useEffect(() => {
+    trackBetterstackFunnelStep('funnel_order_completed', {
+      item_count: order.items.reduce((sum, entry) => sum + entry.item.quantity, 0),
+      item_total: itemTotal,
+      order_id: order.orderId || 'pending-confirmation',
+      shipping_total: shippingTotal,
+      tracking_id: order.shippingTrackingId || 'pending-shipment',
+    });
+
     trackBetterstackEvent('order_complete_viewed', {
       item_count: order.items.reduce((sum, entry) => sum + entry.item.quantity, 0),
       item_total: itemTotal,

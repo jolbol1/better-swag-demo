@@ -6,7 +6,7 @@ import ApiGateway from '../../gateways/Api.gateway';
 import { useAuth } from '../../providers/Auth.provider';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
-import { trackBetterstackEvent } from '../../utils/betterstack';
+import { trackBetterstackEvent, trackBetterstackFunnelStep } from '../../utils/betterstack';
 import { formatMoney, moneyToNumber } from '../../utils/storefront';
 import Recommendations from './Recommendations';
 import { Button } from '../ui/button';
@@ -76,13 +76,22 @@ export default function CartCheckoutView() {
       return;
     }
 
+    trackBetterstackFunnelStep('funnel_checkout_started', {
+      currency: selectedCurrency || 'USD',
+      identified_user: Boolean(user),
+      item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+      page: '/cart',
+      subtotal,
+      user_id: sessionUserId,
+    });
+
     trackBetterstackEvent('checkout_viewed', {
       currency: selectedCurrency || 'USD',
       identified_user: Boolean(user),
       item_count: items.reduce((sum, item) => sum + item.quantity, 0),
       subtotal,
     });
-  }, [items, selectedCurrency, subtotal, user]);
+  }, [items, selectedCurrency, sessionUserId, subtotal, user]);
 
   const { data: shippingCost } = useQuery({
     queryKey: ['shipping-quote', items, selectedCurrency, shippingAddress],
