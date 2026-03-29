@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { FakeUser } from '../../types/Session';
 import { CypressFields } from '../../utils/enums/CypressFields';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
+import { useSession } from '../../providers/Session.provider';
 
 const currentYear = new Date().getFullYear();
 const yearList = Array.from(new Array(20), (v, i) => i + currentYear);
@@ -27,7 +29,21 @@ interface IProps {
   onSubmit(formData: IFormData): void;
 }
 
+const getDefaultFormData = (selectedUser: FakeUser | null): IFormData => ({
+  email: selectedUser?.email || 'someone@example.com',
+  streetAddress: selectedUser?.address.streetAddress || '1600 Amphitheatre Parkway',
+  city: selectedUser?.address.city || 'Mountain View',
+  state: selectedUser?.address.state || 'CA',
+  country: selectedUser?.address.country || 'United States',
+  zipCode: selectedUser?.address.zipCode || '94043',
+  creditCardNumber: selectedUser?.creditCard.creditCardNumber || '4432-8015-6152-0454',
+  creditCardCvv: selectedUser?.creditCard.creditCardCvv || 672,
+  creditCardExpirationYear: selectedUser?.creditCard.creditCardExpirationYear || 2030,
+  creditCardExpirationMonth: selectedUser?.creditCard.creditCardExpirationMonth || 1,
+});
+
 const CheckoutForm = ({ onSubmit }: IProps) => {
+  const { selectedUser } = useSession();
   const [
     {
       email,
@@ -42,23 +58,21 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
       creditCardNumber,
     },
     setFormData,
-  ] = useState<IFormData>({
-    email: 'someone@example.com',
-    streetAddress: '1600 Amphitheatre Parkway',
-    city: 'Mountain View',
-    state: 'CA',
-    country: 'United States',
-    zipCode: "94043",
-    creditCardNumber: '4432-8015-6152-0454',
-    creditCardCvv: 672,
-    creditCardExpirationYear: 2030,
-    creditCardExpirationMonth: 1,
-  });
+  ] = useState<IFormData>(getDefaultFormData(selectedUser));
+
+  useEffect(() => {
+    setFormData(getDefaultFormData(selectedUser));
+  }, [selectedUser]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(formData => ({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.name === 'creditCardCvv' ||
+        e.target.name === 'creditCardExpirationMonth' ||
+        e.target.name === 'creditCardExpirationYear'
+          ? Number(e.target.value)
+          : e.target.value,
     }));
   }, []);
 

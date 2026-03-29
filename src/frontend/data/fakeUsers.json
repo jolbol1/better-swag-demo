@@ -1,0 +1,202 @@
+[
+  {
+    "id": "user_amber_01",
+    "email": "amber.nguyen@example.com",
+    "username": "Amber Nguyen",
+    "plan": "premium",
+    "currencyCode": "USD",
+    "address": {
+      "streetAddress": "1042 Mission Terrace",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "United States",
+      "zipCode": "94110"
+    },
+    "creditCard": {
+      "creditCardNumber": "4242-4242-4242-4242",
+      "creditCardCvv": 424,
+      "creditCardExpirationYear": 2030,
+      "creditCardExpirationMonth": 4
+    }
+  },
+  {
+    "id": "user_ben_02",
+    "email": "ben.carter@example.com",
+    "username": "Ben Carter",
+    "plan": "free",
+    "currencyCode": "USD",
+    "address": {
+      "streetAddress": "88 Pine Street",
+      "city": "Seattle",
+      "state": "WA",
+      "country": "United States",
+      "zipCode": "98101"
+    },
+    "creditCard": {
+      "creditCardNumber": "4000-0027-6000-3184",
+      "creditCardCvv": 318,
+      "creditCardExpirationYear": 2029,
+      "creditCardExpirationMonth": 8
+    }
+  },
+  {
+    "id": "user_clara_03",
+    "email": "clara.rossi@example.com",
+    "username": "Clara Rossi",
+    "plan": "team",
+    "currencyCode": "EUR",
+    "address": {
+      "streetAddress": "21 Via Torino",
+      "city": "Milan",
+      "state": "MI",
+      "country": "Italy",
+      "zipCode": "20123"
+    },
+    "creditCard": {
+      "creditCardNumber": "5555-5555-5555-4444",
+      "creditCardCvv": 555,
+      "creditCardExpirationYear": 2031,
+      "creditCardExpirationMonth": 11
+    }
+  },
+  {
+    "id": "user_diego_04",
+    "email": "diego.alvarez@example.com",
+    "username": "Diego Alvarez",
+    "plan": "premium",
+    "currencyCode": "MXN",
+    "address": {
+      "streetAddress": "145 Avenida Reforma",
+      "city": "Mexico City",
+      "state": "CDMX",
+      "country": "Mexico",
+      "zipCode": "06600"
+    },
+    "creditCard": {
+      "creditCardNumber": "4111-1111-1111-1111",
+      "creditCardCvv": 111,
+      "creditCardExpirationYear": 2032,
+      "creditCardExpirationMonth": 7
+    }
+  },
+  {
+    "id": "user_elise_05",
+    "email": "elise.martin@example.com",
+    "username": "Elise Martin",
+    "plan": "starter",
+    "currencyCode": "EUR",
+    "address": {
+      "streetAddress": "7 Rue des Fleurs",
+      "city": "Lyon",
+      "state": "ARA",
+      "country": "France",
+      "zipCode": "69002"
+    },
+    "creditCard": {
+      "creditCardNumber": "3782-822463-10005",
+      "creditCardCvv": 321,
+      "creditCardExpirationYear": 2030,
+      "creditCardExpirationMonth": 10
+    }
+  },
+  {
+    "id": "user_farah_06",
+    "email": "farah.khan@example.com",
+    "username": "Farah Khan",
+    "plan": "premium",
+    "currencyCode": "GBP",
+    "address": {
+      "streetAddress": "14 Albert Embankment",
+      "city": "London",
+      "state": "England",
+      "country": "United Kingdom",
+      "zipCode": "SE1 7TP"
+    },
+    "creditCard": {
+      "creditCardNumber": "6011-0009-9013-9424",
+      "creditCardCvv": 942,
+      "creditCardExpirationYear": 2031,
+      "creditCardExpirationMonth": 2
+    }
+  },
+  {
+    "id": "user_gabe_07",
+    "email": "gabe.lee@example.com",
+    "username": "Gabe Lee",
+    "plan": "free",
+    "currencyCode": "CAD",
+    "address": {
+      "streetAddress": "510 Front Street West",
+      "city": "Toronto",
+      "state": "ON",
+      "country": "Canada",
+      "zipCode": "M5V 3J1"
+    },
+    "creditCard": {
+      "creditCardNumber": "3566-0020-2036-0505",
+      "creditCardCvv": 505,
+      "creditCardExpirationYear": 2030,
+      "creditCardExpirationMonth": 9
+    }
+  },
+  {
+    "id": "user_hana_08",
+    "email": "hana.sato@example.com",
+    "username": "Hana Sato",
+    "plan": "team",
+    "currencyCode": "JPY",
+    "address": {
+      "streetAddress": "3-5-1 Marunouchi",
+      "city": "Tokyo",
+      "state": "Tokyo",
+      "country": "Japan",
+      "zipCode": "100-0005"
+    },
+    "creditCard": {
+      "creditCardNumber": "3530-1113-3330-0000",
+      "creditCardCvv": 123,
+      "creditCardExpirationYear": 2033,
+      "creditCardExpirationMonth": 6
+    }
+  },
+  {
+    "id": "user_iris_09",
+    "email": "iris.schmidt@example.com",
+    "username": "Iris Schmidt",
+    "plan": "starter",
+    "currencyCode": "EUR",
+    "address": {
+      "streetAddress": "12 Alexanderplatz",
+      "city": "Berlin",
+      "state": "BE",
+      "country": "Germany",
+      "zipCode": "10178"
+    },
+    "creditCard": {
+      "creditCardNumber": "2223-0048-4001-0010",
+      "creditCardCvv": 678,
+      "creditCardExpirationYear": 2029,
+      "creditCardExpirationMonth": 12
+    }
+  },
+  {
+    "id": "user_jules_10",
+    "email": "jules.dubois@example.com",
+    "username": "Jules Dubois",
+    "plan": "premium",
+    "currencyCode": "CHF",
+    "address": {
+      "streetAddress": "42 Bahnhofstrasse",
+      "city": "Zurich",
+      "state": "ZH",
+      "country": "Switzerland",
+      "zipCode": "8001"
+    },
+    "creditCard": {
+      "creditCardNumber": "5200-8282-8282-8210",
+      "creditCardCvv": 210,
+      "creditCardExpirationYear": 2032,
+      "creditCardExpirationMonth": 5
+    }
+  }
+]

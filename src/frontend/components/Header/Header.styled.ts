@@ -51,5 +51,6 @@ export const BrandImg = styled.img.attrs({
 
 export const Controls = styled.div`
   display: flex;
+  align-items: center;
   height: 60px;
 `;

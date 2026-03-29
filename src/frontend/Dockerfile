@@ -17,6 +17,7 @@ COPY ./src/frontend/protos/ protos/
 COPY ./src/frontend/providers/ providers/
 COPY ./src/frontend/services/ services/
 COPY ./src/frontend/styles/ styles/
+COPY ./src/frontend/data/ data/
 COPY ./src/frontend/types/ types/
 
 COPY ./src/frontend/utils/enums/ utils/enums/

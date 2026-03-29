@@ -7,18 +7,20 @@ import request from '../utils/Request';
 import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
 
-const { userId } = SessionGateway.getSession();
-
 const basePath = '/api';
 
 const Apis = () => ({
   getCart(currencyCode: string) {
+    const { userId } = SessionGateway.getSession();
+
     return request<IProductCart>({
       url: `${basePath}/cart`,
       queryParams: { sessionId: userId, currencyCode },
     });
   },
   addCartItem({ currencyCode, ...item }: CartItem & { currencyCode: string }) {
+    const { userId } = SessionGateway.getSession();
+
     return request<Cart>({
       url: `${basePath}/cart`,
       body: { item, userId },
@@ -27,6 +29,8 @@ const Apis = () => ({
     });
   },
   emptyCart() {
+    const { userId } = SessionGateway.getSession();
+
     return request<undefined>({
       url: `${basePath}/cart`,
       method: 'DELETE',
@@ -73,6 +77,8 @@ const Apis = () => ({
     });
   },
   listRecommendations(productIds: string[], currencyCode: string) {
+    const { userId } = SessionGateway.getSession();
+
     return request<Product[]>({
       url: `${basePath}/recommendations`,
       queryParams: {

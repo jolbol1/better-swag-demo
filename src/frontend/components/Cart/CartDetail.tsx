@@ -6,12 +6,10 @@ import { useCallback } from 'react';
 import CartItems from '../CartItems';
 import CheckoutForm from '../CheckoutForm';
 import { IFormData } from '../CheckoutForm/CheckoutForm';
-import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
+import { useSession } from '../../providers/Session.provider';
 import * as S from '../../styles/Cart.styled';
-
-const { userId } = SessionGateway.getSession();
 
 const CartDetail = () => {
   const {
@@ -20,6 +18,9 @@ const CartDetail = () => {
     placeOrder,
   } = useCart();
   const { selectedCurrency } = useCurrency();
+  const {
+    session: { userId },
+  } = useSession();
   const { push } = useRouter();
 
   const onPlaceOrder = useCallback(
@@ -59,7 +60,7 @@ const CartDetail = () => {
         query: { order: JSON.stringify(order) },
       });
     },
-    [placeOrder, push, selectedCurrency]
+    [placeOrder, push, selectedCurrency, userId]
   );
 
   return (

@@ -7,6 +7,7 @@ import ApiGateway from '../gateways/Api.gateway';
 import { CartItem, OrderResult, PlaceOrderRequest } from '../protos/demo';
 import { IProductCart } from '../types/Cart';
 import { useCurrency } from './Currency.provider';
+import { useSession } from './Session.provider';
 
 interface IContext {
   cart: IProductCart;
@@ -30,6 +31,9 @@ export const useCart = () => useContext(Context);
 
 const CartProvider = ({ children }: IProps) => {
   const { selectedCurrency } = useCurrency();
+  const {
+    session: { userId },
+  } = useSession();
   const queryClient = useQueryClient();
   const mutationOptions = useMemo(
     () => ({
@@ -41,7 +45,7 @@ const CartProvider = ({ children }: IProps) => {
   );
 
   const { data: cart = { userId: '', items: [] } } = useQuery({
-    queryKey: ['cart', selectedCurrency],
+    queryKey: ['cart', userId, selectedCurrency],
     queryFn: () => ApiGateway.getCart(selectedCurrency),
   });
   const addCartMutation = useMutation({
