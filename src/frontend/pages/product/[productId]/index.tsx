@@ -52,6 +52,8 @@ const ProductDetail: NextPage = () => {
     }
   ) as { data: Product };
 
+  const productImageSrc = picture ? `/images/products/${picture}` : '';
+
   const onAddItem = useCallback(async () => {
     await addItem({
       productId,
@@ -71,7 +73,7 @@ const ProductDetail: NextPage = () => {
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
-            <S.Image $src={"/images/products/" + picture} data-cy={CypressFields.ProductPicture} />
+            <S.Image $src={productImageSrc} data-cy={CypressFields.ProductPicture} />
             <S.Details>
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
               <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>

@@ -7,6 +7,12 @@ import {context, propagation} from "@opentelemetry/api";
 
 const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
 
+const resolvedPlatform = ENV_PLATFORM || 'local';
+const resolvedBrowserOtlpTracesEndpoint =
+  PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT === 'http://localhost:8080/otlp-http/v1/traces'
+    ? '/otlp-http/v1/traces'
+    : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || '/otlp-http/v1/traces';
+
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
@@ -24,11 +30,11 @@ export default class MyDocument extends Document<{ envString: string }> {
 
       const otlpTracesEndpoint = isSyntheticRequest
           ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
-          : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
+          : resolvedBrowserOtlpTracesEndpoint;
 
       const envString = `
         window.ENV = {
-          NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
+          NEXT_PUBLIC_PLATFORM: '${resolvedPlatform}',
           NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',

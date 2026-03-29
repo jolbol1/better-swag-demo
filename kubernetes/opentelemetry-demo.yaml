@@ -458,7 +458,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8080
+  - port: 80
     name: tcp-service
     targetPort: 8080
   selector:
@@ -1150,7 +1150,7 @@ spec:
         - name: WEB_OTEL_SERVICE_NAME
           value: frontend-web
         - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: http://localhost:8080/otlp-http/v1/traces
+          value: /otlp-http/v1/traces
         resources:
           limits:
             memory: 250Mi
@@ -1364,7 +1364,7 @@ spec:
         - name: LOCUST_SPAWN_RATE
           value: '1'
         - name: LOCUST_HOST
-          value: http://frontend-proxy:8080
+          value: http://better-swag.com
         - name: LOCUST_HEADLESS
           value: 'false'
         - name: LOCUST_AUTOSTART

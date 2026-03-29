@@ -33,18 +33,39 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
+    if (!picture) {
+      setImageSrc('');
+      return;
+    }
+
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
-    headers.append('Cache-Control', 'no-cache')
+    headers.append('Cache-Control', 'no-cache');
     const requestInit = {
-      method: "GET",
-      headers: headers
+      method: 'GET',
+      headers,
     };
-    const image_url ='/images/products/' + picture
+    const image_url = '/images/products/' + picture;
     const requestInfo = new Request(image_url, requestInit);
+    let isActive = true;
+    let objectUrl = '';
+
     getImageWithHeaders(requestInfo).then(blob => {
-      setImageSrc(URL.createObjectURL(blob));
+      objectUrl = URL.createObjectURL(blob);
+      if (isActive) {
+        setImageSrc(objectUrl);
+        return;
+      }
+
+      URL.revokeObjectURL(objectUrl);
     });
+
+    return () => {
+      isActive = false;
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [imageSlowLoad, picture]);
 
   return (

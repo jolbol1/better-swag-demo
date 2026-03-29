@@ -7,7 +7,7 @@ import * as S from './Ad.styled';
 
 const Ad = () => {
   const { adList } = useAd();
-  const { text, redirectUrl } = adList[Math.floor(Math.random() * adList.length)] || { text: '', redirectUrl: '' };
+  const { text, redirectUrl } = adList[0] || { text: '', redirectUrl: '' };
 
   return (
     <S.Ad data-cy={CypressFields.Ad}>
