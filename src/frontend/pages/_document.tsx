@@ -55,7 +55,7 @@ export default class MyDocument extends Document<{ envString: string }> {
   var s=e.createElement('script'); s.async=1; s.crossOrigin='anonymous';
   s.src='https://betterstack.net/b.js?t='+r;
   (e.head||e.getElementsByTagName('head')[0]).appendChild(s);
-}(window,document,'betterstack','fkZkZd4gC1qLzHn5k9mghYkp');
+}(window,document,'betterstack','H6P6bsW28Thbw6tTRt9t3CUX');
 betterstack('init', { environment: 'production' });`,
             }}
           />
