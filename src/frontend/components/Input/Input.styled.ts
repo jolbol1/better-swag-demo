@@ -5,36 +5,45 @@ import styled from 'styled-components';
 
 export const Input = styled.input`
   width: -webkit-fill-available;
-  border: none;
   padding: 16px;
   outline: none;
-
   font-weight: ${({ theme }) => theme.fonts.regular};
-  font-size: ${({ theme }) => theme.sizes.dMedium};
+  font-size: ${({ theme }) => theme.sizes.dSmall};
+  color: ${({ theme }) => theme.colors.textGray};
+  border-radius: ${({ theme }) => theme.radii.small};
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 
-  border-radius: 10px;
-  background: #f9f9f9;
-  border: 1px solid #cacaca;
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textLightGray};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.accent};
+    box-shadow: 0 0 0 4px rgba(109, 199, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+  }
 `;
 
 export const InputLabel = styled.p`
-  font-size: ${({ theme }) => theme.sizes.dMedium};
-  font-weight: ${({ theme }) => theme.fonts.semiBold};
+  font-size: ${({ theme }) => theme.sizes.mMedium};
+  color: ${({ theme }) => theme.colors.textLightGray};
+  font-weight: ${({ theme }) => theme.fonts.regular};
+  letter-spacing: 0.01em;
   margin: 0;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `;
 
 export const Select = styled.select`
   width: 100%;
-  border: none;
-
   padding: 16px;
   font-weight: ${({ theme }) => theme.fonts.regular};
-  font-size: ${({ theme }) => theme.sizes.dMedium};
-
-  border-radius: 10px;
-  background: #f9f9f9;
-  border: 1px solid #cacaca;
+  font-size: ${({ theme }) => theme.sizes.dSmall};
+  color: ${({ theme }) => theme.colors.textGray};
+  border-radius: ${({ theme }) => theme.radii.small};
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
 `;
 
 export const InputRow = styled.div`
@@ -50,5 +59,7 @@ export const Arrow = styled.img.attrs({
   right: 20px;
   width: 10px;
   height: 5px;
-  top: 64px;
+  top: 55px;
+  opacity: 0.7;
+  transform: rotate(90deg);
 `;

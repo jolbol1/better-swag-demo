@@ -36,11 +36,11 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>
       <div>
         <S.Header>
-          <S.Title>Shopping Cart</S.Title>
+          <S.Title>Merch Cart</S.Title>
           <span onClick={onClose}>Close</span>
         </S.Header>
         <S.ItemList>
-          {!productList.length && <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>}
+          {!productList.length && <S.EmptyCart>Your merch cart is empty</S.EmptyCart>}
           {productList.map(
             ({ quantity, product: { name, picture, id, priceUsd = { nanos: 0, currencyCode: 'USD', units: 0 } } }) => (
               <S.Item key={id} data-cy={CypressFields.CartDropdownItem}>
@@ -56,7 +56,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
         </S.ItemList>
       </div>
       <Link href="/cart">
-        <S.CartButton data-cy={CypressFields.CartGoToShopping}>Go to Shopping Cart</S.CartButton>
+        <S.CartButton data-cy={CypressFields.CartGoToShopping}>Open Cart</S.CartButton>
       </Link>
     </S.CartDropdown>
   ) : null;

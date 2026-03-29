@@ -9,6 +9,6 @@ export const ProductList = styled.div`
   gap: 24px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;

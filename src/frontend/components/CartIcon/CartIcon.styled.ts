@@ -7,12 +7,17 @@ import styled from 'styled-components';
 export const CartIcon = styled.a`
   position: relative;
   display: block;
-  margin-left: 25px;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-left: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  background: rgba(255, 255, 255, 0.03);
 `;
 
 export const Icon = styled(Image).attrs({
@@ -27,13 +32,13 @@ export const ItemsCount = styled.span`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 9px;
-  left: 15px;
-  width: 15px;
-  height: 15px;
+  top: 7px;
+  right: 7px;
+  width: 18px;
+  height: 18px;
   font-size: ${({ theme }) => theme.sizes.nano};
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.white};
+  border: 1px solid #05111d;
+  color: #05111d;
   background: ${({ theme }) => theme.colors.otelRed};
 `;

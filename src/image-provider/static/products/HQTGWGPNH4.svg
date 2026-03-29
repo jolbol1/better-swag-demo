@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="180" y1="120" x2="1030" y2="1100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101B2B"/>
+      <stop offset="1" stop-color="#050A12"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="600" y1="330" x2="600" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2D3950"/>
+      <stop offset="1" stop-color="#121A26"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" rx="88" fill="url(#bg)"/>
+  <circle cx="264" cy="216" r="160" fill="#6DC7FF" fill-opacity=".1"/>
+  <circle cx="918" cy="930" r="180" fill="#67E8C3" fill-opacity=".08"/>
+  <path d="M342 654C342 470.089 491.089 321 675 321C797.76 321 908.915 387.607 965 493.648V654H342Z" fill="url(#cap)" stroke="#8EA0B6" stroke-opacity=".22" stroke-width="10"/>
+  <path d="M257 661C345.822 555.371 507.993 510 699.946 542.162C852.249 567.675 980.906 634.919 1024 708.162C897.274 758.753 727.927 777.122 555.527 748.239C412.23 724.224 304.057 693.41 257 661Z" fill="#121A26" stroke="#8EA0B6" stroke-opacity=".18" stroke-width="10"/>
+  <path d="M503 496C557.667 468.667 634 455 719 469" stroke="#6DC7FF" stroke-opacity=".25" stroke-width="16" stroke-linecap="round"/>
+  <rect x="425" y="426" width="350" height="84" rx="42" fill="#6DC7FF" fill-opacity=".1" stroke="#6DC7FF" stroke-opacity=".24"/>
+  <text x="600" y="480" fill="#E9F7FF" font-family="Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="8" text-anchor="middle">BETTER STACK</text>
+  <text x="600" y="1088" fill="#8EA0B6" font-family="Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="12" text-anchor="middle">TRACE CAP</text>
+</svg>

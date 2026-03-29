@@ -1,10 +1,15 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from '../Button';
 
-export const CheckoutForm = styled.form``;
+export const CheckoutForm = styled.form`
+  padding: 26px 24px;
+  border-radius: ${({ theme }) => theme.radii.large};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  background: rgba(255, 255, 255, 0.03);
+`;
 
 export const StateRow = styled.div`
   display: grid;
@@ -15,6 +20,8 @@ export const StateRow = styled.div`
 export const Title = styled.h1`
   margin: 0;
   margin-bottom: 24px;
+  color: ${({ theme }) => theme.colors.textGray};
+  font-size: 28px;
 `;
 
 export const CardRow = styled.div`
@@ -52,6 +59,12 @@ export const EmptyCartButton = styled(Button)`
   font-weight: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.otelRed};
   width: 100%;
+  ${({ $type }) =>
+    !$type &&
+    css`
+      background: rgba(255, 123, 149, 0.08);
+      border-color: rgba(255, 123, 149, 0.32);
+    `}
 
   ${({ theme }) => theme.breakpoints.desktop} {
     width: inherit;

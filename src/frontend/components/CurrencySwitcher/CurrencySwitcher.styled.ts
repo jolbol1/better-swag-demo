@@ -12,27 +12,26 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  margin-left: 40px;
-  color: #605f64;
+  color: ${({ theme }) => theme.colors.textLightGray};
 
   &::-webkit-input-placeholder,
   &::-moz-placeholder,
   :-ms-input-placeholder,
   :-moz-placeholder {
     font-size: 12px;
-    color: #605f64;
+    color: ${({ theme }) => theme.colors.textLightGray};
   }
 `;
 
 export const SelectedConcurrency = styled.span`
-  font-size: ${({ theme }) => theme.sizes.mLarge};
+  font-size: ${({ theme }) => theme.sizes.mMedium};
   text-align: center;
   font-weight: ${({ theme }) => theme.fonts.regular};
-
   position: relative;
-  left: 35px;
+  left: 34px;
   width: 20px;
   display: inline-block;
+  color: ${({ theme }) => theme.colors.accent};
 `;
 
 export const Arrow = styled.img.attrs({
@@ -40,26 +39,27 @@ export const Arrow = styled.img.attrs({
   alt: 'arrow',
 })`
   position: absolute;
-  right: 15px;
+  right: 16px;
   width: 12px;
-  height: 17px;
+  height: 12px;
+  transform: rotate(90deg);
+  opacity: 0.72;
 `;
 
 export const Select = styled.select`
   -webkit-appearance: none;
-  -webkit-border-radius: 0px;
-  font-size: ${({ theme }) => theme.sizes.mLarge};
+  -webkit-border-radius: 0;
   cursor: pointer;
-
   display: flex;
   align-items: center;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   font-weight: ${({ theme }) => theme.fonts.regular};
   border: 1px solid ${({ theme }) => theme.colors.borderGray};
-  width: 130px;
-  height: 40px;
+  color: ${({ theme }) => theme.colors.textGray};
+  width: 132px;
+  height: 44px;
   flex-shrink: 0;
   padding: 1px 0 0 45px;
-  font-size: 16px;
-  border-radius: 10px;
+  font-size: 15px;
+  border-radius: ${({ theme }) => theme.radii.pill};
 `;

@@ -5,21 +5,26 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export const Header = styled.header`
-  background-color: #853b5c;
-  color: white;
+  padding: 20px 20px 0;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    padding: 28px 32px 0;
+  }
 `;
 
 export const NavBar = styled.nav`
-  height: 80px;
-  background-color: white;
+  min-height: 82px;
+  background: rgba(3, 8, 18, 0.48);
   font-size: 15px;
-  color: #b4b2bb;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.textGray};
+  color: ${({ theme }) => theme.colors.textLightGray};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: ${({ theme }) => theme.radii.large};
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 45px -34px ${({ theme }) => theme.colors.shadow};
   z-index: 1;
-  padding: 0;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    height: 100px;
+    min-height: 96px;
   }
 `;
 
@@ -29,10 +34,10 @@ export const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 0 20px;
+  padding: 16px 20px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    padding: 25px 100px;
+    padding: 18px 28px;
   }
 `;
 
@@ -43,9 +48,9 @@ export const NavBarBrand = styled(Link)`
 `;
 
 export const BrandImg = styled.img.attrs({
-  src: '/images/opentelemetry-demo-logo.png',
+  src: '/images/better-stack-logo-wordmark-white.png',
 })`
-  width: 280px;
+  width: 176px;
   height: auto;
 `;
 

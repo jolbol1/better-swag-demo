@@ -8,12 +8,12 @@ import * as S from '../../styles/Cart.styled';
 const EmptyCart = () => {
   return (
     <S.EmptyCartContainer>
-      <S.Title>Your shopping cart is empty!</S.Title>
-      <S.Subtitle>Items you add to your shopping cart will appear here.</S.Subtitle>
+      <S.Title>Your merch cart is empty.</S.Title>
+      <S.Subtitle>Add a Better Swag item and it will show up here instantly.</S.Subtitle>
 
       <S.ButtonContainer>
         <Link href="/">
-          <Button type="submit">Continue Shopping</Button>
+          <Button type="submit">Browse the Collection</Button>
         </Link>
       </S.ButtonContainer>
     </S.EmptyCartContainer>

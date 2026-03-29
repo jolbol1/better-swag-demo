@@ -14,8 +14,8 @@ export const Block = styled.div`
   align-items: center;
   font-size: ${({ theme }) => theme.sizes.mSmall};
   font-weight: ${({ theme }) => theme.fonts.regular};
-  color: ${({ theme }) => theme.colors.white};
-  background: ${({ theme }) => theme.colors.otelYellow};
+  color: #06111d;
+  background: ${({ theme }) => theme.colors.accentSecondary};
 
   ${({ theme }) => theme.breakpoints.desktop} {
     width: 190px;

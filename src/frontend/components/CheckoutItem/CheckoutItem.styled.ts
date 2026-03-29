@@ -8,8 +8,9 @@ export const CheckoutItem = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   padding: 25px;
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radii.medium};
   border: 1px solid ${({ theme }) => theme.colors.lightBorderGray};
+  background: rgba(255, 255, 255, 0.03);
 
   ${({ theme }) => theme.breakpoints.desktop} {
     grid-template-columns: 40% 40% 1fr;
@@ -45,6 +46,7 @@ export const Details = styled.div`
 export const ItemName = styled.h5`
   margin: 0;
   font-size: ${({ theme }) => theme.sizes.mLarge};
+  color: ${({ theme }) => theme.colors.textGray};
 `;
 
 export const ShippingData = styled.div`

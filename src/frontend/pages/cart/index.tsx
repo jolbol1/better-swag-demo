@@ -23,7 +23,7 @@ const Cart: NextPage = () => {
       contextKeys={[...new Set(items.flatMap(({ product }) => product.categories))]}
     >
       <Head>
-        <title>Otel Demo - Cart</title>
+        <title>Better Swag - Cart</title>
       </Head>
       <Layout>
         <S.Cart>

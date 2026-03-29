@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import Button from '../components/Button';
 
 export const Cart = styled.div`
-  margin: 24px;
+  margin: 24px 20px 80px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    margin: 100px;
+    margin: 44px 32px 96px;
   }
 `;
 
@@ -16,6 +16,12 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    align-items: start;
+  }
 `;
 
 export const CarTitle = styled.h1`
@@ -23,11 +29,15 @@ export const CarTitle = styled.h1`
 `;
 
 export const Header = styled.div`
-  margin-bottom: 50px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: start;
+  padding: 24px;
+  border-radius: ${({ theme }) => theme.radii.large};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  background: rgba(255, 255, 255, 0.03);
 
   ${({ theme }) => theme.breakpoints.desktop} {
     flex-direction: row;
@@ -39,6 +49,7 @@ export const Header = styled.div`
 export const Title = styled.h1`
   text-align: center;
   margin: 0;
+  color: ${({ theme }) => theme.colors.textGray};
   font-size: ${({ theme }) => theme.sizes.mLarge};
 
   ${({ theme }) => theme.breakpoints.desktop} {
@@ -69,8 +80,10 @@ export const EmptyCartContainer = styled.div`
   gap: 28px;
   align-items: center;
   justify-content: center;
-  margin-bottom: 120px;
-  margin-top: 24px;
+  padding: 42px 24px;
+  border-radius: ${({ theme }) => theme.radii.large};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  background: rgba(255, 255, 255, 0.03);
 
   ${({ theme }) => theme.breakpoints.desktop} {
     display: grid;

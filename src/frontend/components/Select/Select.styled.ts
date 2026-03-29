@@ -5,13 +5,15 @@ import styled from 'styled-components';
 
 export const Select = styled.select`
   width: 100%;
-  height: 45px;
+  height: 52px;
   border: 1px solid ${({ theme }) => theme.colors.borderGray};
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: ${({ theme }) => theme.radii.small};
   position: relative;
-  width: 100px;
+  min-width: 112px;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.textGray};
+  background: rgba(255, 255, 255, 0.04);
 `;
 
 export const SelectContainer = styled.div`
@@ -24,8 +26,10 @@ export const Arrow = styled.img.attrs({
   alt: 'select',
 })`
   position: absolute;
-  right: 25px;
-  top: 20px;
+  right: 18px;
+  top: 23px;
   width: 10px;
   height: 5px;
+  transform: rotate(90deg);
+  opacity: 0.75;
 `;

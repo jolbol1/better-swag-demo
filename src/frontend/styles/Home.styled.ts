@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: 100%;
-  padding: 0 20px;
+  padding: 0 20px 80px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    padding: 0 100px;
+    padding: 0 32px 120px;
   }
 `;
 
@@ -20,8 +20,9 @@ export const Row = styled.div`
 
 export const Content = styled.div`
   width: 100%;
+
   ${({ theme }) => theme.breakpoints.desktop} {
-    margin-top: 100px;
+    margin-top: 44px;
   }
 `;
 
@@ -29,16 +30,18 @@ export const HotProducts = styled.div`
   margin-bottom: 20px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    margin-bottom: 100px;
+    margin-bottom: 60px;
   }
 `;
 
 export const HotProductsTitle = styled.h1`
+  margin: 0 0 10px;
   font-size: ${({ theme }) => theme.sizes.mLarge};
   font-weight: ${({ theme }) => theme.fonts.bold};
+  color: ${({ theme }) => theme.colors.textGray};
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    font-size: ${({ theme }) => theme.sizes.dxLarge};
+    font-size: 42px;
   }
 `;
 

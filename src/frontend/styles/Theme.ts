@@ -5,16 +5,24 @@ import { DefaultTheme } from 'styled-components';
 
 const Theme: DefaultTheme = {
   colors: {
-    otelBlue: '#5262A8',
-    otelYellow: '#EAAA3B',
-    otelGray: '#403F4B',
-    otelRed: '#FB7181',
-    backgroundGray: 'rgba(64, 63, 75, 0.1)',
-    lightBorderGray: 'rgba(82, 98, 168, 0.3)',
-    borderGray: '#2E2437',
-    textGray: '#29293E',
-    textLightGray: '#78788C',
+    otelBlue: '#6dc7ff',
+    otelYellow: '#8ef2cc',
+    otelGray: '#050a12',
+    otelRed: '#ff7b95',
+    backgroundGray: 'rgba(11, 19, 32, 0.86)',
+    lightBorderGray: 'rgba(255, 255, 255, 0.1)',
+    borderGray: 'rgba(255, 255, 255, 0.14)',
+    textGray: '#ecf4ff',
+    textLightGray: '#8da0b8',
     white: '#FFFFFF',
+    background: '#050a12',
+    surface: '#0d1624',
+    surfaceElevated: '#121f32',
+    surfaceSoft: 'rgba(255, 255, 255, 0.04)',
+    accent: '#6dc7ff',
+    accentSecondary: '#67e8c3',
+    accentGlow: 'rgba(109, 199, 255, 0.18)',
+    shadow: 'rgba(3, 8, 18, 0.45)',
   },
   breakpoints: {
     desktop: '@media (min-width: 768px)',
@@ -35,6 +43,12 @@ const Theme: DefaultTheme = {
     regular: '500',
     semiBold: '700',
     light: '400',
+  },
+  radii: {
+    small: '14px',
+    medium: '24px',
+    large: '32px',
+    pill: '999px',
   },
 };
 

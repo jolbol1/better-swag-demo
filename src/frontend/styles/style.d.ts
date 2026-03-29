@@ -13,9 +13,17 @@ declare module 'styled-components' {
       backgroundGray: string;
       lightBorderGray: string;
       borderGray: string;
-      textGray: string; 
+      textGray: string;
       textLightGray: string;
       white: string;
+      background: string;
+      surface: string;
+      surfaceElevated: string;
+      surfaceSoft: string;
+      accent: string;
+      accentSecondary: string;
+      accentGlow: string;
+      shadow: string;
     };
     sizes: {
       mLarge: string;
@@ -36,6 +44,12 @@ declare module 'styled-components' {
       regular: string;
       semiBold: string;
       light: string;
+    };
+    radii: {
+      small: string;
+      medium: string;
+      large: string;
+      pill: string;
     };
   }
 }

@@ -17,10 +17,11 @@ export const CartDropdown = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 24px;
-  background: ${({ theme }) => theme.colors.white};
+  background: rgba(6, 12, 20, 0.96);
   z-index: 1000;
-  border-radius: 5px;
-  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%);
+  border-radius: ${({ theme }) => theme.radii.medium};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  box-shadow: 0 32px 54px -28px ${({ theme }) => theme.colors.shadow};
 
   ${({ theme }) => theme.breakpoints.desktop} {
     position: absolute;
@@ -33,6 +34,7 @@ export const CartDropdown = styled.div`
 
 export const Title = styled.h5`
   margin: 0px;
+  color: ${({ theme }) => theme.colors.textGray};
   font-size: ${({ theme }) => theme.sizes.mxLarge};
 
   ${({ theme }) => theme.breakpoints.desktop} {
@@ -52,7 +54,7 @@ export const Item = styled.div`
   grid-template-columns: 29% 59%;
   gap: 2%;
   padding: 25px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.textLightGray};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderGray};
 `;
 
 export const ItemImage = styled(Image).attrs({
@@ -64,6 +66,7 @@ export const ItemImage = styled(Image).attrs({
 
 export const ItemName = styled.p`
   margin: 0px;
+  color: ${({ theme }) => theme.colors.textGray};
   font-size: ${({ theme }) => theme.sizes.mLarge};
   font-weight: ${({ theme }) => theme.fonts.regular};
 `;

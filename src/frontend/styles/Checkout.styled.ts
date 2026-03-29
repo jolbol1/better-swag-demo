@@ -4,10 +4,10 @@
 import styled from 'styled-components';
 
 export const Checkout = styled.div`
-  margin: 20px;
+  margin: 24px 20px 80px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    margin: 100px;
+    margin: 44px 32px 96px;
   }
 `;
 
@@ -17,7 +17,10 @@ export const Container = styled.div`
   gap: 28px;
   align-items: center;
   justify-content: center;
-  margin-bottom: 120px;
+  padding: 40px 24px;
+  border-radius: ${({ theme }) => theme.radii.large};
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  background: rgba(255, 255, 255, 0.03);
 
   ${({ theme }) => theme.breakpoints.desktop} {
     display: grid;
@@ -31,7 +34,7 @@ export const DataRow = styled.div`
   justify-content: space-between;
   grid-template-columns: 1fr 1fr;
   padding: 24px 0;
-  border-top: solid 1px rgba(154, 160, 166, 0.5);
+  border-top: solid 1px ${({ theme }) => theme.colors.borderGray};
 
   span:last-of-type {
     text-align: right;
@@ -52,7 +55,7 @@ export const ItemList = styled.div`
 export const Title = styled.h1`
   text-align: center;
   margin: 0;
-
+  color: ${({ theme }) => theme.colors.textGray};
   font-size: ${({ theme }) => theme.sizes.mLarge};
 
   ${({ theme }) => theme.breakpoints.desktop} {

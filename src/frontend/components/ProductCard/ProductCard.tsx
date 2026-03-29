@@ -22,6 +22,8 @@ const ProductCard = ({
     id,
     picture,
     name,
+    description,
+    categories,
     priceUsd = {
       currencyCode: 'USD',
       units: 0,
@@ -31,6 +33,7 @@ const ProductCard = ({
 }: IProps) => {
   const imageSlowLoad = useNumberFlagValue('imageSlowLoad', 0);
   const [imageSrc, setImageSrc] = useState<string>('');
+  const category = categories?.[0] || 'collection';
 
   useEffect(() => {
     if (!picture) {
@@ -72,12 +75,14 @@ const ProductCard = ({
     <S.Link href={`/product/${id}`}>
       <S.ProductCard data-cy={CypressFields.ProductCard}>
         <S.Image $src={imageSrc} />
-        <div>
+        <S.Copy>
+          <S.Category>{category}</S.Category>
           <S.ProductName>{name}</S.ProductName>
+          <S.ProductDescription>{description}</S.ProductDescription>
           <S.ProductPrice>
             <ProductPrice price={priceUsd} />
           </S.ProductPrice>
-        </div>
+        </S.Copy>
       </S.ProductCard>
     </S.Link>
   );

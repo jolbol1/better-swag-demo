@@ -17,7 +17,7 @@ const Footer = () => {
   return (
     <S.Footer>
       <div>
-        <p>This website is hosted for demo purpose only. It is not an actual shop.</p>
+        <p>Better Swag is a demo merch store for Better Stack. Orders are simulated for observability demos only.</p>
         <p>
           <span data-cy={CypressFields.SessionId}>
             session-id: {selectedUser?.id || userId}
@@ -25,7 +25,7 @@ const Footer = () => {
         </p>
       </div>
       <p>
-        @ {currentYear} OpenTelemetry (<a href="https://github.com/open-telemetry/opentelemetry-demo">Source Code</a>)
+        @ {currentYear} Better Swag (<a href="https://github.com/open-telemetry/opentelemetry-demo">Demo Source</a>)
       </p>
       <PlatformFlag />
     </S.Footer>

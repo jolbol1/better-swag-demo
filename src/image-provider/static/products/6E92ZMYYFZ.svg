@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="160" y1="80" x2="1000" y2="1120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#162234"/>
+      <stop offset="1" stop-color="#050A12"/>
+    </linearGradient>
+    <linearGradient id="pant" x1="600" y1="160" x2="600" y2="1020" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3E4B60"/>
+      <stop offset="1" stop-color="#1B2432"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" rx="88" fill="url(#bg)"/>
+  <circle cx="282" cy="202" r="168" fill="#6DC7FF" fill-opacity=".12"/>
+  <circle cx="974" cy="954" r="188" fill="#67E8C3" fill-opacity=".09"/>
+  <path d="M426 204H774L812 420L714 1014H596L640 580H560L604 1014H486L388 420L426 204Z" fill="url(#pant)" stroke="#8EA0B6" stroke-opacity=".24" stroke-width="10"/>
+  <path d="M472 204L472 304" stroke="#617186" stroke-width="12" stroke-linecap="round"/>
+  <path d="M728 204L728 304" stroke="#617186" stroke-width="12" stroke-linecap="round"/>
+  <path d="M452 998H600" stroke="#0A111A" stroke-width="26" stroke-linecap="round"/>
+  <path d="M600 998H748" stroke="#0A111A" stroke-width="26" stroke-linecap="round"/>
+  <rect x="408" y="110" width="384" height="66" rx="33" fill="#6DC7FF" fill-opacity=".12" stroke="#6DC7FF" stroke-opacity=".24"/>
+  <text x="600" y="154" fill="#DDF5FF" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="7" text-anchor="middle">BETTER SWAG</text>
+  <text x="600" y="1090" fill="#8EA0B6" font-family="Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="10" text-anchor="middle">OPS JOGGERS</text>
+</svg>

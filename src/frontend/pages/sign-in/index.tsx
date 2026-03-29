@@ -26,14 +26,14 @@ const SignInPage: NextPage = () => {
   return (
     <Layout>
       <Head>
-        <title>Otel Demo - Sign In</title>
+        <title>Better Swag - Sign In</title>
       </Head>
       <S.SignIn>
         <S.Intro>
-          <S.Title>Pick a demo user</S.Title>
+          <S.Title>Pick a Better Swag shopper</S.Title>
           <S.Description>
-            Choose a fake customer profile to reuse a known e-mail address, shipping details, payment details,
-            cart identity, and Better Stack user context for this browser session.
+            Choose a saved merch profile to preload contact details, shipping info, payment data, and Better Stack
+            user context for this browser session.
           </S.Description>
           {selectedUser && (
             <S.ActiveUser>

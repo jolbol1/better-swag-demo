@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import Button from '../components/Button';
 
 export const SignIn = styled.div`
-  padding: 40px 20px 80px;
+  padding: 30px 20px 80px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    padding: 60px 100px 100px;
+    padding: 44px 32px 100px;
   }
 `;
 
@@ -19,6 +19,7 @@ export const Intro = styled.div`
 
 export const Title = styled.h1`
   margin: 0 0 12px;
+  color: ${({ theme }) => theme.colors.textGray};
   font-size: 32px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
@@ -36,9 +37,9 @@ export const Description = styled.p`
 export const ActiveUser = styled.div`
   margin-top: 20px;
   padding: 16px 20px;
-  border: 1px solid ${({ theme }) => theme.colors.textGray};
-  border-radius: 12px;
-  background: rgba(133, 59, 92, 0.06);
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: ${({ theme }) => theme.radii.medium};
+  background: rgba(109, 199, 255, 0.08);
 `;
 
 export const ActiveLabel = styled.p`
@@ -57,10 +58,10 @@ export const UserGrid = styled.div`
 `;
 
 export const UserCard = styled.article`
-  border: 1px solid ${({ theme }) => theme.colors.textGray};
-  border-radius: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: ${({ theme }) => theme.radii.medium};
   padding: 20px;
-  background: ${({ theme }) => theme.colors.white};
+  background: rgba(255, 255, 255, 0.03);
 `;
 
 export const UserHeader = styled.div`
@@ -74,6 +75,7 @@ export const UserHeader = styled.div`
 export const UserName = styled.h2`
   margin: 0;
   font-size: ${({ theme }) => theme.sizes.dMedium};
+  color: ${({ theme }) => theme.colors.textGray};
 `;
 
 export const UserEmail = styled.p`
@@ -88,7 +90,7 @@ export const Plan = styled.span`
   min-width: 88px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(82, 98, 168, 0.12);
+  background: rgba(109, 199, 255, 0.12);
   color: ${({ theme }) => theme.colors.otelBlue};
   font-size: ${({ theme }) => theme.sizes.nano};
   text-transform: uppercase;
@@ -98,12 +100,12 @@ export const DetailList = styled.div`
   display: grid;
   gap: 8px;
   margin-bottom: 20px;
-  color: ${({ theme }) => theme.colors.textGray};
+  color: ${({ theme }) => theme.colors.textLightGray};
 `;
 
 export const Detail = styled.p`
   margin: 0;
-  color: ${({ theme }) => theme.colors.textGray};
+  color: ${({ theme }) => theme.colors.textLightGray};
 `;
 
 export const Actions = styled.div`
@@ -114,7 +116,7 @@ export const Actions = styled.div`
 `;
 
 export const Status = styled.span`
-  color: ${({ theme }) => theme.colors.otelBlue};
+  color: ${({ theme }) => theme.colors.accentSecondary};
   font-size: ${({ theme }) => theme.sizes.nano};
   text-transform: uppercase;
 `;
