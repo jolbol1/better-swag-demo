@@ -57,6 +57,16 @@ export const Title = styled.h1`
   }
 `;
 
+export const ErrorCallout = styled.div`
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: ${({ theme }) => theme.radii.medium};
+  border: 1px solid rgba(255, 104, 104, 0.45);
+  background: rgba(255, 104, 104, 0.12);
+  color: #ffd5d5;
+  font-size: ${({ theme }) => theme.sizes.mSmall};
+`;
+
 export const Subtitle = styled.h3`
   text-align: center;
   margin: 0;

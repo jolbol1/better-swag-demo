@@ -1,23 +1,13 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+FROM artilleryio/artillery:latest
 
-FROM python:3.12-slim-bookworm AS base
+WORKDIR /app
 
-FROM base AS builder
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends g++ \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY ./src/load-generator/requirements.txt .
-RUN pip install --prefix="/reqs" -r requirements.txt
-
-FROM base
-WORKDIR /usr/src/app/
-COPY --from=builder /reqs /usr/local
-ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
-RUN playwright install --with-deps chromium
-COPY ./src/load-generator/locustfile.py .
+COPY ./src/load-generator/artillery-funnel.cjs .
+COPY ./src/load-generator/run-artillery.mjs .
 COPY ./src/load-generator/people.json .
 COPY ./src/frontend/data/fakeUsers.json fake_users.json
-ENTRYPOINT ["locust", "--skip-log-setup"]
+
+ENTRYPOINT ["node", "run-artillery.mjs"]

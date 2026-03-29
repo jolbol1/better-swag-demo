@@ -1093,7 +1093,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend
-        image: betterstack/opentelemetry-demo:latest-frontend
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-frontend@sha256:72c58d0f539e22de9bb3efad4af565e7196f83196c71b6cff7b2524bbb069c5f
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1323,7 +1323,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: load-generator
-        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-load-generator@sha256:494e347d9c83f8efdded133d1b6386c12d7cc32c91efd0388a5b78351119bd19
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-load-generator@sha256:40cb1b3febfbc9cdf12253fa4e6b63191e54ee04b1c86870a6a7375bea76f7a1
         imagePullPolicy: Always
         ports:
         - containerPort: 8089
@@ -1333,24 +1333,16 @@ spec:
           value: 0.0.0.0
         - name: LOCUST_WEB_PORT
           value: '8089'
-        - name: LOCUST_USERS
+        - name: ARTILLERY_MAX_VUS
           value: '10'
-        - name: LOCUST_SPAWN_RATE
-          value: '1'
-        - name: LOCUST_HOST
+        - name: ARTILLERY_ARRIVAL_RATE
+          value: '10'
+        - name: ARTILLERY_DURATION
+          value: '86400'
+        - name: ARTILLERY_TARGET
           value: http://better-swag.com
-        - name: LOCUST_HEADLESS
-          value: 'false'
-        - name: LOCUST_AUTOSTART
+        - name: ARTILLERY_HEADLESS
           value: 'true'
-        - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-          value: 'true'
-        - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
-          value: python
-        - name: FLAGD_HOST
-          value: flagd
-        - name: FLAGD_OFREP_PORT
-          value: '8016'
         resources:
           requests:
             memory: 1500Mi

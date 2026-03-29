@@ -19,7 +19,7 @@ declare global {
       NEXT_PUBLIC_PLATFORM?: string;
       IS_SYNTHETIC_REQUEST?: string;
     };
-    betterstack?: (command: string, payload: unknown) => void;
+    betterstack?: (...args: unknown[]) => void;
   }
 }
 

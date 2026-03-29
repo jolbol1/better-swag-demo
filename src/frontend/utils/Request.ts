@@ -9,6 +9,18 @@ interface IRequestParams {
   headers?: Record<string, string>;
 }
 
+const getErrorMessage = (payload: unknown, fallbackMessage: string) => {
+  if (typeof payload === 'string' && payload.trim()) {
+    return payload;
+  }
+
+  if (payload && typeof payload === 'object' && 'message' in payload && typeof payload.message === 'string') {
+    return payload.message;
+  }
+
+  return fallbackMessage;
+};
+
 const request = async <T>({
   url = '',
   method = 'GET',
@@ -18,17 +30,32 @@ const request = async <T>({
     'content-type': 'application/json',
   },
 }: IRequestParams): Promise<T> => {
-  const response = await fetch(`${url}?${new URLSearchParams(queryParams).toString()}`, {
+  const searchParams = new URLSearchParams(queryParams).toString();
+  const requestUrl = searchParams ? `${url}?${searchParams}` : url;
+  const response = await fetch(requestUrl, {
     method,
     body: body ? JSON.stringify(body) : undefined,
     headers,
   });
-
+  const contentType = response.headers.get('content-type') || '';
   const responseText = await response.text();
 
-  if (!!responseText) return JSON.parse(responseText);
+  if (!responseText) {
+    if (!response.ok) {
+      throw new Error(response.statusText || 'Request failed');
+    }
 
-  return undefined as unknown as T;
+    return undefined as unknown as T;
+  }
+
+  const isJsonResponse = contentType.includes('application/json');
+  const payload = isJsonResponse ? JSON.parse(responseText) : responseText;
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(payload, response.statusText || 'Request failed'));
+  }
+
+  return payload as T;
 };
 
 export default request;

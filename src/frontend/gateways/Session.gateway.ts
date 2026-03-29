@@ -30,7 +30,7 @@ const normalizeSession = (value: unknown): SessionState => {
 
   if (selectedUser) {
     return {
-      userId: selectedUser.id,
+      userId: partial.userId || v4(),
       currencyCode: partial.currencyCode || selectedUser.currencyCode,
       selectedUserId: selectedUser.id,
     };
@@ -111,8 +111,10 @@ const signIn = (fakeUserId: string) => {
     return getSession();
   }
 
+  const { userId } = getSession();
+
   return persistSession({
-    userId: fakeUser.id,
+    userId: userId || v4(),
     currencyCode: fakeUser.currencyCode,
     selectedUserId: fakeUser.id,
   });

@@ -3,6 +3,7 @@
 
 import styled from 'styled-components';
 import Button from '../components/Button';
+import Link from 'next/link';
 
 export const ProductDetail = styled.div`
   padding: 24px 20px 80px;
@@ -96,5 +97,34 @@ export const ProductPrice = styled(Text)`
 
   ${({ theme }) => theme.breakpoints.desktop} {
     font-size: 34px;
+  }
+`;
+
+export const CartNotice = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: ${({ theme }) => theme.radii.medium};
+  border: 1px solid rgba(109, 199, 255, 0.24);
+  background: rgba(109, 199, 255, 0.08);
+  color: ${({ theme }) => theme.colors.textGray};
+`;
+
+export const CartNoticeText = styled(Text)`
+  color: ${({ theme }) => theme.colors.textGray};
+  font-weight: ${({ theme }) => theme.fonts.semiBold};
+`;
+
+export const CartLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.otelBlue};
+  font-size: ${({ theme }) => theme.sizes.dSmall};
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;

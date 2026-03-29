@@ -20,21 +20,29 @@ import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
+import { useSession } from '../../../providers/Session.provider';
+import { trackBetterStackEvent } from '../../../utils/betterstack';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
 const ProductDetail: NextPage = () => {
-  const { push, query } = useRouter();
+  const { query } = useRouter();
   const [quantity, setQuantity] = useState(1);
+  const [hasAddedToCart, setHasAddedToCart] = useState(false);
   const {
     addItem,
     cart: { items },
   } = useCart();
   const { selectedCurrency } = useCurrency();
+  const {
+    session: { userId },
+    selectedUser,
+  } = useSession();
   const productId = query.productId as string;
 
   useEffect(() => {
     setQuantity(1);
+    setHasAddedToCart(false);
   }, [productId]);
 
   const {
@@ -59,8 +67,32 @@ const ProductDetail: NextPage = () => {
       productId,
       quantity,
     });
-    push('/cart');
-  }, [addItem, productId, quantity, push]);
+    trackBetterStackEvent('product-added-to-cart', {
+      user_id: userId,
+      selected_user_id: selectedUser?.id || null,
+      selected_user_plan: selectedUser?.plan || null,
+      product_id: productId,
+      product_name: name,
+      product_categories: categories,
+      quantity,
+      currency_code: selectedCurrency,
+      unit_price: priceUsd.units + priceUsd.nanos / 1_000_000_000,
+      source_page: `/product/${productId}`,
+    });
+    setHasAddedToCart(true);
+  }, [
+    addItem,
+    categories,
+    name,
+    priceUsd.nanos,
+    priceUsd.units,
+    productId,
+    quantity,
+    selectedCurrency,
+    selectedUser?.id,
+    selectedUser?.plan,
+    userId,
+  ]);
 
   return (
     <AdProvider
@@ -95,6 +127,14 @@ const ProductDetail: NextPage = () => {
               <S.AddToCart data-cy={CypressFields.ProductAddToCart} onClick={onAddItem}>
                 <Image src="/icons/Cart.svg" height="15" width="15" alt="cart" /> Add To Cart
               </S.AddToCart>
+              {hasAddedToCart && (
+                <S.CartNotice data-cy={CypressFields.ProductCartNotice}>
+                  <S.CartNoticeText>{name} is in your cart. Keep shopping or open the cart when you are ready.</S.CartNoticeText>
+                  <S.CartLink href="/cart" data-cy={CypressFields.ProductOpenCart}>
+                    Open Cart
+                  </S.CartLink>
+                </S.CartNotice>
+              )}
             </S.Details>
           </S.Container>
           <Recommendations />
