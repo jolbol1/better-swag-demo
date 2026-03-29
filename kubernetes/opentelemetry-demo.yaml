@@ -1323,7 +1323,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: load-generator
-        image: betterstack/opentelemetry-demo:latest-load-generator
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-load-generator@sha256:494e347d9c83f8efdded133d1b6386c12d7cc32c91efd0388a5b78351119bd19
         imagePullPolicy: Always
         ports:
         - containerPort: 8089
@@ -1352,8 +1352,10 @@ spec:
         - name: FLAGD_OFREP_PORT
           value: '8016'
         resources:
-          limits:
+          requests:
             memory: 1500Mi
+          limits:
+            memory: 4Gi
         volumeMounts:
       volumes:
 ---

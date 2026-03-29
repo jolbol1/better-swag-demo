@@ -31,12 +31,12 @@ def get_flagd_value(FlagName):
     return client.get_integer_value(FlagName, 0)
 
 categories = [
-    "binoculars",
-    "telescopes",
+    "hoodies",
+    "tshirts",
+    "drinkware",
     "accessories",
-    "assembly",
-    "travel",
-    "books",
+    "bags",
+    "bottoms",
     None,
 ]
 
@@ -213,15 +213,15 @@ if browser_traffic_enabled:
         async def sign_in_fake_user_and_browse(self, page: PageWithRetry):
             try:
                 fake_user = get_fake_user()
+                product = random.choice(products)
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/sign-in", wait_until="domcontentloaded")
                 await page.click(f'button[data-user-id="{fake_user["id"]}"]')
                 await page.wait_for_load_state("domcontentloaded")
-                await page.click('p:has-text("Roof Binoculars")')
-                await page.wait_for_load_state("domcontentloaded")
+                await page.goto(f"/product/{product}", wait_until="domcontentloaded")
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
-                logging.info(f"Signed in via UI as fake user {fake_user['id']}")
+                logging.info(f"Signed in via UI as fake user {fake_user['id']} and browsed {product}")
             except Exception as e:
                 logging.error(f"Error in sign-in browser task: {str(e)}")
 
@@ -230,18 +230,19 @@ if browser_traffic_enabled:
         async def revisit_with_preloaded_fake_user(self, page: PageWithRetry):
             try:
                 fake_user = get_fake_user()
+                product = random.choice(products)
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await self.set_fake_user_session(page, fake_user)
                 await page.goto("/cart", wait_until="domcontentloaded")
-                await page.select_option('[name="currency_code"]', fake_user.get("currencyCode", "USD"))
                 await page.wait_for_load_state("domcontentloaded")
-                await page.click('p:has-text("Roof Binoculars")')
+                await page.goto(f"/product/{product}", wait_until="domcontentloaded")
                 await page.wait_for_load_state("domcontentloaded")
+                await page.wait_for_selector('button:has-text("Add To Cart")')
                 await page.click('button:has-text("Add To Cart")')
                 await page.wait_for_load_state("domcontentloaded")
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
-                logging.info(f"Visited with preloaded fake user {fake_user['id']}")
+                logging.info(f"Visited with preloaded fake user {fake_user['id']} and added {product} to cart")
             except Exception as e:
                 logging.error(f"Error in preloaded fake-user task: {str(e)}")
 
