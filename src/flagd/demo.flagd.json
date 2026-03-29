@@ -96,6 +96,24 @@
       },
       "defaultVariant": "off"
     },
+    "frontendManualEventsEnabled": {
+      "description": "Enable manually created Better Stack track events in the frontend.",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "on"
+    },
+    "frontendUserIdentificationEnabled": {
+      "description": "Enable Better Stack user identification calls in the frontend.",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "on"
+    },
     "imageSlowLoad": {
       "description": "slow loading images in the frontend",
       "state": "ENABLED",

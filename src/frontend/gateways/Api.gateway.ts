@@ -4,24 +4,22 @@
 import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
-import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
 
-const { userId } = SessionGateway.getSession();
-
 const basePath = '/api';
+const getUserId = () => SessionGateway.getSession().userId;
 
 const Apis = () => ({
   getCart(currencyCode: string) {
     return request<IProductCart>({
       url: `${basePath}/cart`,
-      queryParams: { sessionId: userId, currencyCode },
+      queryParams: { sessionId: getUserId(), currencyCode },
     });
   },
   addCartItem({ currencyCode, ...item }: CartItem & { currencyCode: string }) {
     return request<Cart>({
       url: `${basePath}/cart`,
-      body: { item, userId },
+      body: { item, userId: getUserId() },
       queryParams: { currencyCode },
       method: 'POST',
     });
@@ -30,7 +28,7 @@ const Apis = () => ({
     return request<undefined>({
       url: `${basePath}/cart`,
       method: 'DELETE',
-      body: { userId },
+      body: { userId: getUserId() },
     });
   },
 
@@ -77,7 +75,7 @@ const Apis = () => ({
       url: `${basePath}/recommendations`,
       queryParams: {
         productIds,
-        sessionId: userId,
+        sessionId: getUserId(),
         currencyCode,
       },
     });

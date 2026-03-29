@@ -6,14 +6,13 @@ import { useCallback } from 'react';
 import CartItems from '../CartItems';
 import CheckoutForm from '../CheckoutForm';
 import { IFormData } from '../CheckoutForm/CheckoutForm';
-import SessionGateway from '../../gateways/Session.gateway';
+import { useAuth } from '../../providers/Auth.provider';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from '../../styles/Cart.styled';
 
-const { userId } = SessionGateway.getSession();
-
 const CartDetail = () => {
+  const { sessionUserId } = useAuth();
   const {
     cart: { items },
     emptyCart,
@@ -36,7 +35,7 @@ const CartDetail = () => {
       creditCardNumber,
     }: IFormData) => {
       const order = await placeOrder({
-        userId,
+        userId: sessionUserId,
         email,
         address: {
           streetAddress,
@@ -59,7 +58,7 @@ const CartDetail = () => {
         query: { order: JSON.stringify(order) },
       });
     },
-    [placeOrder, push, selectedCurrency]
+    [placeOrder, push, selectedCurrency, sessionUserId]
   );
 
   return (

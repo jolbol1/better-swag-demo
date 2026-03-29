@@ -3,14 +3,11 @@
 
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '../../components/Footer';
-import Layout from '../../components/Layout';
-import Recommendations from '../../components/Recommendations';
-import * as S from '../../styles/Cart.styled';
-import CartDetail from '../../components/Cart/CartDetail';
-import EmptyCart from '../../components/Cart/EmptyCart';
 import { useCart } from '../../providers/Cart.provider';
 import AdProvider from '../../providers/Ad.provider';
+import AdStrip from '../../components/store/AdStrip';
+import CartCheckoutView from '../../components/store/CartCheckoutView';
+import StoreShell from '../../components/store/StoreShell';
 
 const Cart: NextPage = () => {
   const {
@@ -23,15 +20,12 @@ const Cart: NextPage = () => {
       contextKeys={[...new Set(items.flatMap(({ product }) => product.categories))]}
     >
       <Head>
-        <title>Otel Demo - Cart</title>
+        <title>Checkout | Better Swag</title>
       </Head>
-      <Layout>
-        <S.Cart>
-          {(!!items.length && <CartDetail />) || <EmptyCart />}
-          <Recommendations />
-        </S.Cart>
-        <Footer />
-      </Layout>
+      <StoreShell>
+        <AdStrip />
+        <CartCheckoutView />
+      </StoreShell>
     </AdProvider>
   );
 };

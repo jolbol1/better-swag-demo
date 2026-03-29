@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import '../styles/globals.css';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
+import { Geist_Mono, Space_Grotesk } from 'next/font/google';
+import AuthProvider from '../providers/Auth.provider';
+import BetterstackFlagSync from '../components/BetterstackFlagSync';
 import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
@@ -11,6 +15,7 @@ import Theme from '../styles/Theme';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
+import { FRONTEND_VERSION } from '../utils/version';
 
 declare global {
   interface Window {
@@ -53,19 +58,36 @@ if (typeof window !== 'undefined') {
 }
 
 const queryClient = new QueryClient();
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    console.log(`[frontend] version ${FRONTEND_VERSION}`);
+  }, []);
+
   return (
     <ThemeProvider theme={Theme}>
-      <OpenFeatureProvider>
-        <QueryClientProvider client={queryClient}>
-          <CurrencyProvider>
-            <CartProvider>
-              <Component {...pageProps} />
-            </CartProvider>
-          </CurrencyProvider>
-        </QueryClientProvider>
-      </OpenFeatureProvider>
+      <div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} ${geistMono.variable}`}>
+        <OpenFeatureProvider>
+          <BetterstackFlagSync />
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <CurrencyProvider>
+                <CartProvider>
+                  <Component {...pageProps} />
+                </CartProvider>
+              </CurrencyProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </OpenFeatureProvider>
+      </div>
     </ThemeProvider>
   );
 }

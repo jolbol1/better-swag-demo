@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import { CartItem, OrderResult, PlaceOrderRequest } from '../protos/demo';
 import { IProductCart } from '../types/Cart';
+import { useAuth } from './Auth.provider';
 import { useCurrency } from './Currency.provider';
 
 interface IContext {
@@ -29,6 +30,7 @@ interface IProps {
 export const useCart = () => useContext(Context);
 
 const CartProvider = ({ children }: IProps) => {
+  const { sessionUserId } = useAuth();
   const { selectedCurrency } = useCurrency();
   const queryClient = useQueryClient();
   const mutationOptions = useMemo(
@@ -41,7 +43,7 @@ const CartProvider = ({ children }: IProps) => {
   );
 
   const { data: cart = { userId: '', items: [] } } = useQuery({
-    queryKey: ['cart', selectedCurrency],
+    queryKey: ['cart', sessionUserId, selectedCurrency],
     queryFn: () => ApiGateway.getCart(selectedCurrency),
   });
   const addCartMutation = useMutation({
