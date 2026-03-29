@@ -100,15 +100,25 @@ const planOutcomeOffsets = {
 
 const planOutcomeCounters = new Map();
 const entryModes = ['sign_in', 'remembered', 'anonymous'];
-const stageTimingRanges = {
-  home: [700, 3600, 1500],
-  product: [1200, 5200, 2400],
-  post_add: [500, 2600, 1200],
-  cart: [900, 4200, 1800],
-  checkout: [1300, 6000, 2600],
-  post_checkout: [1200, 3600, 1900],
-  micro: [180, 850, 350],
+const baseStageTimingRanges = {
+  home: [2500, 16000, 6500],
+  product: [4500, 28000, 11000],
+  post_add: [1200, 9000, 3200],
+  cart: [3000, 18000, 7500],
+  checkout: [5500, 36000, 14000],
+  post_checkout: [1800, 10000, 4200],
+  micro: [350, 2400, 800],
 };
+
+const planCompletedJourneyTargetsMs = {
+  premium: 90000,
+  team: 98000,
+  free: 106000,
+  anonymous: 114000,
+  starter: 120000,
+};
+
+const completedJourneyStages = ['home', 'product', 'micro', 'post_add', 'cart', 'micro', 'checkout', 'post_checkout'];
 
 const baseUrl = (process.env.ARTILLERY_TARGET || process.env.LOCUST_HOST || 'http://better-swag.com').replace(/\/+$/, '');
 
@@ -204,8 +214,23 @@ const triangular = (minimum, maximum, mode) => {
   return maximum - Math.sqrt((1 - randomValue) * (maximum - minimum) * (maximum - mode));
 };
 
-const pauseForStage = async (page, stage) => {
-  const [minimum, maximum, mode] = stageTimingRanges[stage];
+const averageTriangular = ([minimum, maximum, mode]) => (minimum + maximum + mode) / 3;
+
+const baseCompletedJourneyMeanMs = completedJourneyStages.reduce(
+  (total, stage) => total + averageTriangular(baseStageTimingRanges[stage]),
+  0
+);
+
+const getPlanTimingScale = plan =>
+  (planCompletedJourneyTargetsMs[plan] || planCompletedJourneyTargetsMs.starter) / baseCompletedJourneyMeanMs;
+
+const getStageTimingRange = (plan, stage) => {
+  const scale = getPlanTimingScale(plan);
+  return baseStageTimingRanges[stage].map(value => Math.round(value * scale));
+};
+
+const pauseForStage = async (page, plan, stage) => {
+  const [minimum, maximum, mode] = getStageTimingRange(plan, stage);
   await page.waitForTimeout(Math.round(triangular(minimum, maximum, mode)));
 };
 
@@ -351,6 +376,7 @@ async function browserFunnel(page, vuContext, events, test) {
   const profile = getPlanProfile(plan);
   const plannedOutcome = chooseFunnelOutcome(plan);
   const expectedTotal = profile.productViewRate * profile.addToCartRate * profile.cartViewRate * profile.checkoutRate;
+  const expectedJourneySeconds = Math.round(planCompletedJourneyTargetsMs[plan] || planCompletedJourneyTargetsMs.starter) / 1000;
 
   logFunnel(
     `task boot user=${sessionUserId} plan=${plan} entry=${entryMode} category=${category} product=${productId}`
@@ -366,15 +392,15 @@ async function browserFunnel(page, vuContext, events, test) {
   logFunnel(
     `session started user=${sessionUserId} plan=${plan} entry=${entryMode} category=${category} product=${productId} expected_total=${(
       expectedTotal * 100
-    ).toFixed(1)}% planned_outcome=${plannedOutcome}`
+    ).toFixed(1)}% expected_journey=${expectedJourneySeconds}s planned_outcome=${plannedOutcome}`
   );
 
   if (test && typeof test.step === 'function') {
     await test.step('homepage', async () => {
-      await pauseForStage(page, 'home');
+      await pauseForStage(page, plan, 'home');
     });
   } else {
-    await pauseForStage(page, 'home');
+    await pauseForStage(page, plan, 'home');
   }
 
   if (plannedOutcome === 'home') {
@@ -384,7 +410,7 @@ async function browserFunnel(page, vuContext, events, test) {
 
   await page.locator(`a[href="/product/${productId}"]`).first().click();
   await page.waitForSelector('[data-cy="product-detail"]', { timeout: 15000 });
-  await pauseForStage(page, 'product');
+  await pauseForStage(page, plan, 'product');
 
   if (plannedOutcome === 'product') {
     logFunnel(`drop-off stage=product user=${sessionUserId} plan=${plan} category=${category} product=${productId}`);
@@ -392,14 +418,14 @@ async function browserFunnel(page, vuContext, events, test) {
   }
 
   await page.selectOption('[data-cy="product-quantity"]', String(quantity));
-  await pauseForStage(page, 'micro');
+  await pauseForStage(page, plan, 'micro');
   await awaitJsonResponse(
     page,
     response => response.url().includes('/api/cart') && response.request().method() === 'POST',
     () => page.click('[data-cy="product-add-to-cart"]')
   );
   await page.waitForSelector('[data-cy="product-cart-notice"]', { timeout: 15000 });
-  await pauseForStage(page, 'post_add');
+  await pauseForStage(page, plan, 'post_add');
   logFunnel(`add-to-cart user=${sessionUserId} plan=${plan} category=${category} product=${productId} quantity=${quantity}`);
 
   if (plannedOutcome === 'post_add') {
@@ -409,15 +435,15 @@ async function browserFunnel(page, vuContext, events, test) {
 
   await page.goto(absoluteUrl('/cart'), { waitUntil: 'commit' });
   await page.waitForSelector('[data-cy="checkout-place-order"]', { timeout: 15000 });
-  await pauseForStage(page, 'cart');
+  await pauseForStage(page, plan, 'cart');
 
   if (plannedOutcome === 'cart') {
     logFunnel(`drop-off stage=cart user=${sessionUserId} plan=${plan} category=${category} product=${productId}`);
     return;
   }
 
-  await pauseForStage(page, 'micro');
-  await pauseForStage(page, 'checkout');
+  await pauseForStage(page, plan, 'micro');
+  await pauseForStage(page, plan, 'checkout');
   await awaitJsonResponse(
     page,
     response => response.url().includes('/api/checkout') && response.request().method() === 'POST',
@@ -425,7 +451,7 @@ async function browserFunnel(page, vuContext, events, test) {
   );
   await page.waitForFunction(() => window.location.pathname.startsWith('/cart/checkout/'), null, { timeout: 15000 });
   await page.waitForSelector('text=Your Better Swag order is confirmed.', { timeout: 15000 });
-  await pauseForStage(page, 'post_checkout');
+  await pauseForStage(page, plan, 'post_checkout');
 
   if (events && typeof events.emit === 'function') {
     events.emit('counter', 'browser.funnel.checkout_complete', 1);

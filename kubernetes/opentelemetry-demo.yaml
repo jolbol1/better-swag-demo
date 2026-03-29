@@ -1323,7 +1323,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: load-generator
-        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-load-generator@sha256:40cb1b3febfbc9cdf12253fa4e6b63191e54ee04b1c86870a6a7375bea76f7a1
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-load-generator@sha256:040bd49e558db346fc09760365e17a813b00557e6ab1989602920f8fc6208b8b
         imagePullPolicy: Always
         ports:
         - containerPort: 8089
