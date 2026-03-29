@@ -88,8 +88,23 @@ journey_stages = [
     "order_completed",
 ]
 
-api_journey_stage_weights = [34, 27, 18, 12, 9]
-browser_journey_stage_weights = [24, 22, 18, 14, 22]
+funnel_categories = ["apparel", "carry", "desk"]
+
+default_api_journey_stage_weights = [34, 27, 18, 12, 9]
+default_browser_journey_stage_weights = [24, 22, 18, 14, 22]
+
+category_journey_stage_weights = {
+    "api": {
+        "apparel": [16, 16, 16, 12, 40],
+        "carry": [18, 18, 17, 12, 35],
+        "desk": [24, 24, 20, 12, 20],
+    },
+    "browser": {
+        "apparel": [16, 16, 16, 12, 40],
+        "carry": [18, 18, 17, 12, 35],
+        "desk": [24, 24, 20, 12, 20],
+    },
+}
 
 # The load generator intentionally excludes James Shoppy.
 # He is reserved for manual human-driven frontend sessions during demos.
@@ -210,8 +225,18 @@ def build_checkout_person(profile):
     template["userId"] = profile["user_id"]
     return template
 
-def choose_funnel_stage(audience="api"):
-    weights = browser_journey_stage_weights if audience == "browser" else api_journey_stage_weights
+def choose_funnel_category(profile):
+    demo_user = profile["demo_user"]
+    if demo_user and random.random() < 0.7:
+        return demo_user["preferred_category"]
+
+    return random.choices(funnel_categories, weights=[40, 30, 30], k=1)[0]
+
+def choose_funnel_stage(audience="api", category=None):
+    weights = category_journey_stage_weights.get(audience, {}).get(category)
+    if weights is None:
+        weights = default_browser_journey_stage_weights if audience == "browser" else default_api_journey_stage_weights
+
     return random.choices(journey_stages, weights=weights, k=1)[0]
 
 def choose_distinct_products(profile, count):
@@ -224,8 +249,33 @@ def choose_distinct_products(profile, count):
 
     return selected
 
+def choose_distinct_products_for_category(profile, category, count):
+    if category not in products_by_category:
+        return choose_distinct_products(profile, count)
+
+    available_products = list(products_by_category[category])
+    demo_user = profile["demo_user"]
+    preferred_products = []
+
+    if demo_user:
+        preferred_products = [product for product in demo_user["preferred_products"] if product in available_products]
+
+    pool = preferred_products + [product for product in available_products if product not in preferred_products]
+    selected = []
+
+    while len(selected) < count:
+        if preferred_products and random.random() < 0.7:
+            product = random.choice(preferred_products)
+        else:
+            product = random.choice(pool)
+
+        if product not in selected:
+            selected.append(product)
+
+    return selected
+
 class WebsiteUser(HttpUser):
-    weight = 4
+    weight = 3
     wait_time = between(1, 10)
     
     def on_start(self):
@@ -325,14 +375,16 @@ class WebsiteUser(HttpUser):
     def run_shopper_journey(self):
         self.reset_connection()
         self.profile = choose_session_profile()
-        stage = choose_funnel_stage("api")
+        primary_category = choose_funnel_category(self.profile)
+        stage = choose_funnel_stage("api", primary_category)
         product_count = random.choices([1, 2, 3], weights=[65, 25, 10], k=1)[0]
-        products_to_view = choose_distinct_products(self.profile, product_count)
+        products_to_view = choose_distinct_products_for_category(self.profile, primary_category, product_count)
 
         logging.info(
-            "User %s running API journey stage=%s identified=%s products=%s",
+            "User %s running API journey stage=%s category=%s identified=%s products=%s",
             self.profile["user_id"],
             stage,
+            primary_category,
             bool(self.profile["demo_user"]),
             ",".join(products_to_view),
         )
@@ -395,7 +447,7 @@ browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").l
 
 if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
-        weight = 1
+        weight = 2
         headless = True  # to use a headless browser, without a GUI
 
         def __init__(self, *args, **kwargs):
@@ -411,10 +463,14 @@ if browser_traffic_enabled:
                 "demoUserId": profile["demo_user"]["id"] if profile["demo_user"] else None,
                 "userId": profile["user_id"],
             }
+
             await page.goto("/", wait_until="domcontentloaded")
+            await page.context.clear_cookies()
             await page.evaluate(
                 """
                 session => {
+                    localStorage.clear();
+                    sessionStorage.clear();
                     localStorage.setItem('session', JSON.stringify(session));
                 }
                 """,
@@ -423,27 +479,25 @@ if browser_traffic_enabled:
             await page.goto("/", wait_until="domcontentloaded")
             return profile
 
-        @task
-        @pw
-        async def run_weighted_store_journey(self, page: PageWithRetry):
-            try:
-                page.on("console", lambda msg: print(msg.text))
-                await page.route('**/*', add_baggage_header)
-                profile = await self.seed_session(page)
-                stage = choose_funnel_stage("browser")
-                products_to_view = choose_distinct_products(
-                    profile,
-                    random.choices([1, 2, 3], weights=[70, 22, 8], k=1)[0],
-                )
+        async def run_single_journey(self, page: PageWithRetry, profile):
+            primary_category = choose_funnel_category(profile)
+            stage = choose_funnel_stage("browser", primary_category)
+            products_to_view = choose_distinct_products_for_category(
+                profile,
+                primary_category,
+                random.choices([1, 2, 3], weights=[70, 22, 8], k=1)[0],
+            )
 
-                logging.info(
-                    "Browser user %s running browser journey stage=%s identified=%s products=%s",
-                    profile["user_id"],
-                    stage,
-                    bool(profile["demo_user"]),
-                    ",".join(products_to_view),
-                )
+            logging.info(
+                "Browser user %s running browser journey stage=%s category=%s identified=%s products=%s",
+                profile["user_id"],
+                stage,
+                primary_category,
+                bool(profile["demo_user"]),
+                ",".join(products_to_view),
+            )
 
+            async with event(self, name=f"browser_journey:{stage}", request_type="BROWSER"):
                 await self.pause(page)
 
                 if stage == "storefront_bounce":
@@ -481,8 +535,20 @@ if browser_traffic_enabled:
                 await page.wait_for_load_state("domcontentloaded")
                 await self.pause(page, 1800, 3200)
                 logging.info("Browser user %s completed checkout journey", profile["user_id"])
-            except Exception as e:
-                logging.error(f"Error in browser journey task: {str(e)}")
+
+        @task
+        @pw
+        async def run_weighted_store_journey(self, page: PageWithRetry):
+            await page.route('**/*', add_baggage_header)
+
+            while True:
+                try:
+                    profile = await self.seed_session(page)
+                    await self.run_single_journey(page, profile)
+                    await self.pause(page, 900, 2200)
+                except Exception as e:
+                    logging.error(f"Error in browser journey task: {str(e)}")
+                    await self.pause(page, 1500, 2500)
 
 async def add_baggage_header(route: Route, request: Request):
     existing_baggage = request.headers.get('baggage', '')

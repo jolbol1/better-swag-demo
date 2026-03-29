@@ -7,7 +7,7 @@ import { useAuth } from '../../providers/Auth.provider';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
 import { trackBetterstackEvent } from '../../utils/betterstack';
-import { formatMoney, moneyToNumber } from '../../utils/storefront';
+import { formatMoney, getPrimaryCategoryFromLineItems, moneyToNumber } from '../../utils/storefront';
 import Recommendations from './Recommendations';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -70,6 +70,10 @@ export default function CartCheckoutView() {
 
   const isShippingReady = Object.values(shippingAddress).every(Boolean) && items.length > 0;
   const subtotal = items.reduce((sum, item) => sum + moneyToNumber(item.product.priceUsd) * item.quantity, 0);
+  const primaryCategory = useMemo(
+    () => getPrimaryCategoryFromLineItems(items.map(item => ({ productId: item.product.id, quantity: item.quantity }))),
+    [items]
+  );
 
   useEffect(() => {
     if (items.length === 0) {
@@ -77,12 +81,13 @@ export default function CartCheckoutView() {
     }
 
     trackBetterstackEvent('checkout_viewed', {
+      category: primaryCategory,
       currency: selectedCurrency || 'USD',
       identified_user: Boolean(user),
       item_count: items.reduce((sum, item) => sum + item.quantity, 0),
       subtotal,
     });
-  }, [items, selectedCurrency, sessionUserId, subtotal, user]);
+  }, [items, primaryCategory, selectedCurrency, sessionUserId, subtotal, user]);
 
   const { data: shippingCost } = useQuery({
     queryKey: ['shipping-quote', items, selectedCurrency, shippingAddress],
@@ -99,19 +104,21 @@ export default function CartCheckoutView() {
     }
 
     trackBetterstackEvent('shipping_quote_received', {
+      category: primaryCategory,
       country: shippingAddress.country,
       currency: selectedCurrency || 'USD',
       item_count: items.reduce((sum, item) => sum + item.quantity, 0),
       shipping_cost: moneyToNumber(shippingCost),
       state: shippingAddress.state,
     });
-  }, [isShippingReady, items, selectedCurrency, shippingAddress.country, shippingAddress.state, shippingCost]);
+  }, [isShippingReady, items, primaryCategory, selectedCurrency, shippingAddress.country, shippingAddress.state, shippingCost]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
 
     trackBetterstackEvent('checkout_submitted', {
+      category: primaryCategory,
       currency: selectedCurrency || 'USD',
       identified_user: Boolean(user),
       item_count: items.reduce((sum, item) => sum + item.quantity, 0),

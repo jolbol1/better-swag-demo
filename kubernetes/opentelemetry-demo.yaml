@@ -1379,7 +1379,7 @@ spec:
           value: '8016'
         resources:
           limits:
-            memory: 1500Mi
+            memory: 3000Mi
         volumeMounts:
       volumes:
 ---

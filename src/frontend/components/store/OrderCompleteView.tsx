@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import { IProductCheckout } from '../../types/Cart';
 import { trackBetterstackEvent } from '../../utils/betterstack';
-import { formatMoney, getProductImagePath, getStoreFamily, getStoreVariant, moneyToNumber } from '../../utils/storefront';
+import { formatMoney, getPrimaryCategoryFromLineItems, getProductImagePath, getStoreFamily, getStoreVariant, moneyToNumber } from '../../utils/storefront';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 
@@ -11,16 +11,23 @@ export default function OrderCompleteView({ order }: { order: IProductCheckout }
   const itemTotal = order.items.reduce((sum, entry) => sum + moneyToNumber(entry.cost), 0);
   const shippingTotal = moneyToNumber(order.shippingCost);
   const currencyTemplate = order.shippingCost || order.items[0]?.cost;
+  const primaryCategory = getPrimaryCategoryFromLineItems(
+    order.items.map(entry => ({
+      productId: entry.item.productId,
+      quantity: entry.item.quantity,
+    }))
+  );
 
   useEffect(() => {
     trackBetterstackEvent('order_complete_viewed', {
+      category: primaryCategory,
       item_count: order.items.reduce((sum, entry) => sum + entry.item.quantity, 0),
       item_total: itemTotal,
       order_id: order.orderId || 'pending-confirmation',
       shipping_total: shippingTotal,
       tracking_id: order.shippingTrackingId || 'pending-shipment',
     });
-  }, [itemTotal, order.items, order.orderId, order.shippingTrackingId, shippingTotal]);
+  }, [itemTotal, order.items, order.orderId, order.shippingTrackingId, primaryCategory, shippingTotal]);
 
   return (
     <main className="mt-8">

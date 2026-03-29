@@ -158,6 +158,23 @@ export function getStoreFamily(productId: string) {
   return storeFamiliesByProductId[productId];
 }
 
+export function getPrimaryCategoryFromLineItems(lineItems: Array<{ productId: string; quantity: number }>) {
+  const categoryTotals = lineItems.reduce<Record<string, number>>((acc, item) => {
+    const category = getStoreFamily(item.productId)?.category;
+
+    if (!category) {
+      return acc;
+    }
+
+    acc[category] = (acc[category] || 0) + item.quantity;
+    return acc;
+  }, {});
+
+  const [primaryCategory] = Object.entries(categoryTotals).sort((left, right) => right[1] - left[1])[0] || [];
+
+  return primaryCategory || 'Merch';
+}
+
 export function getStoreVariant(productId: string) {
   return storeVariantsByProductId[productId];
 }
