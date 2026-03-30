@@ -5,13 +5,22 @@ import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/do
 import { ServerStyleSheet } from 'styled-components';
 import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+const {
+  ENV_PLATFORM,
+  WEB_OTEL_SERVICE_NAME,
+  PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+  OTEL_COLLECTOR_HOST,
+  ENABLE_BETTERSTACK_USER_IDENTIFICATION,
+  ENABLE_BETTERSTACK_CUSTOM_EVENTS,
+} = process.env;
 
 const resolvedPlatform = ENV_PLATFORM || 'local';
 const resolvedBrowserOtlpTracesEndpoint =
   PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT === 'http://localhost:8080/otlp-http/v1/traces'
     ? '/otlp-http/v1/traces'
     : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || '/otlp-http/v1/traces';
+const resolvedBetterStackUserIdentification = ENABLE_BETTERSTACK_USER_IDENTIFICATION || 'true';
+const resolvedBetterStackCustomEvents = ENABLE_BETTERSTACK_CUSTOM_EVENTS || 'true';
 
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -37,6 +46,8 @@ export default class MyDocument extends Document<{ envString: string }> {
           NEXT_PUBLIC_PLATFORM: '${resolvedPlatform}',
           NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
+          ENABLE_BETTERSTACK_USER_IDENTIFICATION: '${resolvedBetterStackUserIdentification}',
+          ENABLE_BETTERSTACK_CUSTOM_EVENTS: '${resolvedBetterStackCustomEvents}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
         };`;
       return {
@@ -67,7 +78,7 @@ export default class MyDocument extends Document<{ envString: string }> {
     var s=e.createElement('script'); s.async=1; s.crossOrigin='anonymous';
     s.src='https://betterstack.net/b.js?t='+r;
     (e.head||e.getElementsByTagName('head')[0]).appendChild(s);
-  }(window,document,'betterstack','riL1iF9qxdcRnXWENc7yhJmt');
+  }(window,document,'betterstack','Kp7kiM34u7LuGCiYAui42ajD');
   betterstack('init', { environment: 'production' });`,
             }}
           />

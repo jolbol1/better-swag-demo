@@ -17,6 +17,8 @@ declare global {
   interface Window {
     ENV: {
       NEXT_PUBLIC_PLATFORM?: string;
+      ENABLE_BETTERSTACK_USER_IDENTIFICATION?: string;
+      ENABLE_BETTERSTACK_CUSTOM_EVENTS?: string;
       IS_SYNTHETIC_REQUEST?: string;
     };
     betterstack?: (...args: unknown[]) => void;

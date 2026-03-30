@@ -1093,7 +1093,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend
-        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-frontend@sha256:72c58d0f539e22de9bb3efad4af565e7196f83196c71b6cff7b2524bbb069c5f
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-frontend@sha256:abd6e4d524a54a8078e673b226fbb5ba6cff5d3ded455d4041ef12aebb9f39d5
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1125,6 +1125,10 @@ spec:
           value: frontend-web
         - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           value: /otlp-http/v1/traces
+        - name: ENABLE_BETTERSTACK_USER_IDENTIFICATION
+          value: 'true'
+        - name: ENABLE_BETTERSTACK_CUSTOM_EVENTS
+          value: 'true'
         resources:
           limits:
             memory: 250Mi
@@ -1227,7 +1231,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: image-provider
-        image: betterstack/opentelemetry-demo:latest-image-provider
+        image: 739275471749.dkr.ecr.eu-west-2.amazonaws.com/opentelemetry-demo-image-provider@sha256:2b8f03aee84cc92ba373be590cc06947a3ed2380e70bbb06e0f6428098f9416f
         imagePullPolicy: Always
         ports:
         - containerPort: 8081

@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import SessionGateway from '../gateways/Session.gateway';
 import { getFakeUserById } from '../data/fakeUsers';
 import { FakeUser, SessionState } from '../types/Session';
+import { setBetterStackUser } from '../utils/betterstack';
 
 interface IContext {
   hasHydratedSession: boolean;
@@ -55,16 +56,16 @@ const SessionProvider = ({ children }: IProps) => {
   }, []);
 
   useEffect(() => {
-    if (!hasHydratedSession || typeof window === 'undefined' || typeof window.betterstack !== 'function') {
+    if (!hasHydratedSession) {
       return;
     }
 
     if (!selectedUser) {
-      window.betterstack('user', null);
+      setBetterStackUser(null);
       return;
     }
 
-    window.betterstack('user', {
+    setBetterStackUser({
       id: selectedUser.id,
       email: selectedUser.email,
       username: selectedUser.username,
