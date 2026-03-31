@@ -33,10 +33,18 @@ const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) 
     case 'POST': {
       const { userId, item } = body as AddItemRequest;
 
-      await CartGateway.addItem(userId, item!);
-      const cart = await CartGateway.getCart(userId);
+      if (!userId || !item) {
+        return res.status(400).json({ message: 'userId and item are required' } as any);
+      }
 
-      return res.status(200).json(cart);
+      try {
+        await CartGateway.addItem(userId, item);
+        const cart = await CartGateway.getCart(userId);
+        return res.status(200).json(cart);
+      } catch (error) {
+        console.error('Failed to add item to cart:', error);
+        return res.status(500).json({ message: 'Failed to add item to cart' } as any);
+      }
     }
 
     case 'DELETE': {

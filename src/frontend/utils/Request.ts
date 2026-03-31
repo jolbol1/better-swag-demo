@@ -26,6 +26,10 @@ const request = async <T>({
 
   const responseText = await response.text();
 
+  if (!response.ok) {
+    throw new Error(responseText || response.statusText);
+  }
+
   if (!!responseText) return JSON.parse(responseText);
 
   return undefined as unknown as T;
