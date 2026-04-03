@@ -26,6 +26,19 @@ const request = async <T>({
 
   const responseText = await response.text();
 
+  if (!response.ok) {
+    let errorMessage = `Request failed with status ${response.status}`;
+    if (responseText) {
+      try {
+        const errorBody = JSON.parse(responseText);
+        if (errorBody.error) errorMessage = errorBody.error;
+      } catch {
+        // non-JSON error body, use status message
+      }
+    }
+    throw new Error(errorMessage);
+  }
+
   if (!!responseText) return JSON.parse(responseText);
 
   return undefined as unknown as T;
